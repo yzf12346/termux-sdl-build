@@ -3,15 +3,19 @@
 
 ### 如何使用
 解压libs.zip文件，复制SDL库文件到/data/data/com.termux/files/usr/lib
+
 解压heades.zip文件，复制SDL头文件到/data/data/com.termux/files/usr/include
+
 进入examples下，执行make run
 
 This is a termux sdl plugin, based on cctools
 
 ### How to use
 Extract the libs.zip file and copy the SDL library file to /data/data/com.termux/files/usr/lib
- Extract the headers.zip file and copy the SDL header file to /data/data/com.termux/files/usr/include
- Enter examples and execute make runw
+
+Extract the headers.zip file and copy the SDL header file to /data/data/com.termux/files/usr/include
+
+Enter examples and execute make run
 
 
 screenshot1.jpg

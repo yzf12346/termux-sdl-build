@@ -7,12 +7,12 @@
 #
 
 
-TERMUX_PREFIX = /data/data/com.termux/files/usr
-
 
 TARGET = showfont
 
 all: $(TARGET)
+
+TERMUX_PREFIX = /data/data/com.termux/files/usr
 
 CFLAGS = -Os -Wall -DANDROID -I${TERMUX_PREFIX}/include
 

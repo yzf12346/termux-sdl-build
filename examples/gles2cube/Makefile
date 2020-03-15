@@ -6,11 +6,13 @@
 # type log to check application log
 #
 
-TERMUX_PREFIX = /data/data/com.termux/files/usr
 
 TARGET = gles2cube
 
 all: $(TARGET)
+
+TERMUX_PREFIX = /data/data/com.termux/files/usr
+
 
 CFLAGS = -Os -fPIC -Wall -DANDROID -I${TERMUX_PREFIX}/include/SDL2
 

@@ -7,11 +7,12 @@
 #
 
 
-TERMUX_PREFIX = /data/data/com.termux/files/usr
 
 TARGET = gles2example
 
 all: $(TARGET)
+
+TERMUX_PREFIX = /data/data/com.termux/files/usr
 
 CFLAGS = -Os -fPIC -Wall -DANDROID -I${TERMUX_PREFIX}/include
 

@@ -49,14 +49,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import com.termux.sdl.JNI;
-import com.termux.sdl.Util;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
-import java.io.FileNotFoundException;
 
 /**
     SDL Activity

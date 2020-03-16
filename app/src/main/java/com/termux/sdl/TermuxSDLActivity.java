@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 import java.io.File;
 import org.libsdl.app.SDLActivity;
-import android.content.Intent;
 
 public class TermuxSDLActivity extends SDLActivity {
 

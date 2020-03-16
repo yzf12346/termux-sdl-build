@@ -1,9 +1,11 @@
 package com.termux.sdl;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +20,7 @@ public class TermuxSDLActivity extends SDLActivity {
     // the self lib pathname
     private String sdlmain = "libmain.so";
 
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +57,6 @@ public class TermuxSDLActivity extends SDLActivity {
 
     @Override
     protected String getMainSharedObject() {
-
         if (null != sdlmain && !"".equals(sdlmain)) {
             //Log.i(TAG, pathname);
             return sdlmain;
@@ -65,7 +67,6 @@ public class TermuxSDLActivity extends SDLActivity {
 
 
     public void loadLibFile() {
-
         if (null == sdlmain || "".equals(sdlmain)) return ;
         String libDir = getCacheDir().getParentFile().getAbsolutePath() + "/tmpdir";
         String libFile = libDir + "/" + (new File(sdlmain)).getName();
@@ -79,7 +80,7 @@ public class TermuxSDLActivity extends SDLActivity {
                 Util.copyFile(new File(sdlmain), new File(libFile));
                 Runtime.getRuntime().exec("chmod 755 " + libFile).waitFor();
                 sdlmain = libFile;
-
+                
             } catch (Exception ex) {
                 Log.e(TAG, "copy sdlmain failed " + ex);
                 showErrorDialog(ex.getMessage());
@@ -87,6 +88,26 @@ public class TermuxSDLActivity extends SDLActivity {
         }
     }
 
+  
+
+    private void restartActivity() {
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                SDLActivity.nativeSendQuit();
+                Intent intent = getIntent();
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK 
+                                                            | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                overridePendingTransition(0, 0);
+                finish();
+
+                overridePendingTransition(0, 0);
+                startActivity(intent);
+            }
+        });
+    }
+    
+    
     @Override
     protected void onStop() {
         super.onStop();
@@ -139,6 +160,7 @@ public class TermuxSDLActivity extends SDLActivity {
 
         switch (item.getItemId()) {
             case R.id.action_settings:
+                restartActivity();
                 break;
         }
         return super.onOptionsItemSelected(item);

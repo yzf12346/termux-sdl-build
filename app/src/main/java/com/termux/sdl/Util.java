@@ -32,7 +32,7 @@ public final class Util {
 
             // Copy the bits from instream to outstream
             byte[] buf = new byte[1024 * 1024];
-            int len;
+            int len = 0;
             while ((len = in.read(buf)) > 0) {
                 out.write(buf, 0, len);
             }

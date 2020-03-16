@@ -29,9 +29,7 @@ static SDL_GLContext *context = NULL;
 static int depth = 16;
 
 /* Call this instead of exit(), so we can clean up SDL: atexit() is evil. */
-static void
-quit(int rc)
-{
+static void quit(int rc) {
     int i;
 
     if (context != NULL) {
@@ -48,9 +46,7 @@ quit(int rc)
     exit(rc);
 }
 
-static void
-Render()
-{
+static void Render() {
     static GLubyte color[8][4] = { {255, 0, 0, 0},
     {255, 0, 0, 255},
     {0, 255, 0, 255},
@@ -99,9 +95,7 @@ Render()
     glRotatef(5.0, 1.0, 1.0, 1.0);
 }
 
-int
-main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     int fsaa, accel;
     int value;
     int i, done;
@@ -341,9 +335,7 @@ main(int argc, char *argv[])
 
 #else /* HAVE_OPENGLES */
 
-int
-main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "No OpenGL ES support on this system\n");
     return 1;
 }

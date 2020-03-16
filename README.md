@@ -1,5 +1,5 @@
 # termux-sdl
-这是一个termux sdl插件，基于cctools
+这是一个termux sdl插件，examples来源于cctools
 
 ### 如何使用
 解压libs.zip文件，复制SDL库文件到/data/data/com.termux/files/usr/lib
@@ -8,7 +8,7 @@
 
 进入examples下，执行make run
 
-This is a termux sdl plugin, based on cctools
+This is a termux sdl plugin, examples from cctools
 
 ### How to use
 Extract the libs.zip file and copy the SDL library file to /data/data/com.termux/files/usr/lib

@@ -5,11 +5,9 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := SDL2_net
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)
+LOCAL_CFLAGS :=
 
-LOCAL_SRC_FILES := SDLnet.c \
-    SDLnetselect.c \
-    SDLnetTCP.c \
-    SDLnetUDP.c
+LOCAL_SRC_FILES := SDLnet.c SDLnetTCP.c SDLnetUDP.c SDLnetselect.c
 
 LOCAL_SHARED_LIBRARIES := SDL2
 

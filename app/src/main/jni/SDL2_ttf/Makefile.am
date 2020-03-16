@@ -15,12 +15,13 @@ EXTRA_DIST =			\
 	external		\
 	version.rc		\
 	VisualC			\
+	VisualC-WinRT		\
 	Xcode			\
 	Xcode-iOS		\
 	SDL2_ttf.spec		\
-	SDL2_ttf.spec.in		\
+	SDL2_ttf.spec.in	\
 	gcc-fat.sh		\
-	autogen.sh			\
+	autogen.sh		\
 	$(srcdir)/*.txt
 
 if USE_VERSION_RC
@@ -35,6 +36,7 @@ libSDL2_ttf_la_LDFLAGS = 	\
 	-release $(LT_RELEASE)	\
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 endif
+libSDL2_ttf_la_LIBADD = @MATHLIB@
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = SDL2_ttf.pc

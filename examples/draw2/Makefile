@@ -14,9 +14,9 @@ TERMUX_PREFIX = /data/data/com.termux/files/usr
 
 CFLAGS = -Os -Wall -DANDROID -I${TERMUX_PREFIX}/include
 
-LDFLAGS = -shared ${TERMUX_PREFIX}/lib/SDL_android_main.o -lSDL2 -lGLESv1_CM -llog -lm
+LDFLAGS = -shared -lSDL2 -lGLESv1_CM -llog -lm
 
-SDLRUN = am start $(shell am 2>&1| grep -q '\-\-user' && echo '--user 0') -n com.termux.sdl/.TermuxSDLActivity -e sdlmain
+SDLRUN = am start -S $(shell am 2>&1| grep -q '\-\-user' && echo '--user 0') -n com.termux.sdl/.TermuxSDLActivity -e sdlmain
 
 OBJS = $(TARGET).o
 

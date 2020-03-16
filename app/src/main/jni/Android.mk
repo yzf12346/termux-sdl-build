@@ -22,3 +22,4 @@ include $(PROJ_PATH)/SDL2_net/Android.mk
 include $(PROJ_PATH)/SDL2_ttf/Android.mk
 include $(PROJ_PATH)/src/Android.mk
 include $(PROJ_PATH)/demo/Android.mk
+

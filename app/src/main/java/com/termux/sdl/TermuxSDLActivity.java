@@ -18,7 +18,7 @@ public class TermuxSDLActivity extends SDLActivity {
         String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
         
         if(!hasPermission(permission)){
-            requestPermission(permission);
+            applyPermission(permission);
         }
     }
 
@@ -31,7 +31,7 @@ public class TermuxSDLActivity extends SDLActivity {
             return true;
     }
 
-    public void requestPermission(String permission){
+    public void applyPermission(String permission){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             if(shouldShowRequestPermissionRationale(permission)){
                 Toast.makeText(this, "request read sdcard permmission", Toast.LENGTH_SHORT).show();

@@ -15,7 +15,7 @@ public final class Util {
 
     private static final String TAG = "Termux SDL JNI";
 
-    public static void copyDirectory(File source , File target) throws IOException {
+    public static void copyFile(File source , File target) throws IOException {
         if (source.isDirectory()) {
             if (!target.exists()) {
                 target.mkdir();
@@ -23,7 +23,7 @@ public final class Util {
 
             String[] children = source.list();
             for (int i=0; i < children.length; i++) {
-                copyDirectory(new File(source, children[i]),
+                copyFile(new File(source, children[i]),
                               new File(target, children[i]));
             }
         } else {
@@ -41,7 +41,7 @@ public final class Util {
         }
     }
 
-    public static void deleteDirectory(File file) {
+    public static void deleteFile(File file) {
         if (file.isDirectory()) {
             if (file.list().length == 0) {
                 file.delete();
@@ -49,7 +49,7 @@ public final class Util {
                 String files[] = file.list();
                 for (String temp: files) {
                     File fileDelete = new File(file, temp);
-                    deleteDirectory(fileDelete);
+                    deleteFile(fileDelete);
                 }
                 if (file.list().length == 0) {
                     file.delete();

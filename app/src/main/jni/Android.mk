@@ -14,7 +14,7 @@
 #
 
 PROJ_PATH := $(call my-dir)
-include $(CLEAR_VARS)
+#include $(CLEAR_VARS)
 
 include $(PROJ_PATH)/SDL2/Android.mk
 include $(PROJ_PATH)/SDL2_image/Android.mk

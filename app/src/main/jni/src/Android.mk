@@ -19,7 +19,7 @@ include $(CLEAR_VARS)
 LOCAL_CPP_EXTENSION := .cpp .cc
 LOCAL_CXX_FLAGS  := -std=c++14
 LOCAL_MODULE     := termux_sdl
-LOCAL_C_INCLUDES := -ISDL/include \
+LOCAL_C_INCLUDES := -ISDL2/include \
                     -ISDL2_image \
                     -ISDL2_mixer \
                     -ISDL2_net \

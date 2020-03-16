@@ -1,6 +1,6 @@
 #
 # SDL application Makefile
-# type  args to build
+# type args to build
 # type run to execute
 # type clean to clean sources
 # type log to check application log

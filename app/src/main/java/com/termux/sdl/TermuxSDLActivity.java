@@ -65,6 +65,7 @@ public class TermuxSDLActivity extends SDLActivity {
                     Util.copyDirectory(new File(sdlmain), new File(libFile));
                     Runtime.getRuntime().exec("chmod 755 " + libFile).waitFor();
                 } catch (Exception ex) {
+                    System.out.println("Error: " + ex.getMessage());
                     Log.e(TAG, "copy sdlmain failed " + ex);
                     showErrorDialog(ex.getMessage());
                 }
@@ -76,6 +77,7 @@ public class TermuxSDLActivity extends SDLActivity {
                     JNI.chDir(pwd);
                     JNI.setEnv("PWD", pwd, true);
                 } catch (UnsatisfiedLinkError e) {
+                    System.out.println("Error: " + e.getMessage());
                     Log.e(TAG, "Native code library failed to load.\n" + e);
                     showErrorDialog(e.getMessage());
                 }

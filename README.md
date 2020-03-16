@@ -6,6 +6,8 @@
 
 解压heades.zip文件，复制SDL头文件到/data/data/com.termux/files/usr/include
 
+解压examples.zip文件到/sdcard根目录(showimage和playmus需要绝对路径)
+
 进入examples下，执行make run
 
 This is a termux sdl plugin, examples from cctools
@@ -14,6 +16,8 @@ This is a termux sdl plugin, examples from cctools
 Extract the libs.zip file and copy the SDL library file to /data/data/com.termux/files/usr/lib
 
 Extract the headers.zip file and copy the SDL header file to /data/data/com.termux/files/usr/include
+
+Extract the examples.zip file to /sdacrd root directory (because showimage and playmus need absolute paths)
 
 Enter examples and execute make run
 

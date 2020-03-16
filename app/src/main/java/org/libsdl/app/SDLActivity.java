@@ -946,8 +946,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     /**
      * This method is called by SDL using JNI.
      */
-    public static boolean isScreenKeyboardShown()
-    {
+    public static boolean isScreenKeyboardShown() {
         if (mTextEdit == null) {
             return false;
         }
@@ -964,8 +963,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     /**
      * This method is called by SDL using JNI.
      */
-    public static boolean supportsRelativeMouse()
-    {
+    public static boolean supportsRelativeMouse() {
         // ChromeOS doesn't provide relative mouse motion via the Android 7 APIs
         if (isChromebook()) {
             return false;
@@ -988,8 +986,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     /**
      * This method is called by SDL using JNI.
      */
-    public static boolean setRelativeMouseEnabled(boolean enabled)
-    {
+    public static boolean setRelativeMouseEnabled(boolean enabled) {
         if (enabled && !supportsRelativeMouse()) {
             return false;
         }
@@ -2112,8 +2109,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
     }
 
     // Captured pointer events for API 26.
-    public boolean onCapturedPointerEvent(MotionEvent event)
-    {
+    public boolean onCapturedPointerEvent(MotionEvent event) {
         int action = event.getActionMasked();
 
         float x, y;

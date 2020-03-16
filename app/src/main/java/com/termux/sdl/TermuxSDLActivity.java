@@ -15,12 +15,8 @@ public class TermuxSDLActivity extends SDLActivity {
 
     private static final String TAG = "TermuxSDLActivity";
 
-    // get the parameters passed by am command 
-    private Bundle mBundle;
-
-    // the self lib path name
-    private String pathname = "";
-
+    // the self lib pathname
+    private String sdlmain = "libmain.so";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,20 +33,19 @@ public class TermuxSDLActivity extends SDLActivity {
             }
         }
 
-        mBundle = getIntent().getExtras();
-        if(mBundle != null) {
-            loadLibFile(); // load self lib
-        }
+        sdlmain = getIntent().getStringExtra("sdlmain");
+
+        loadLibFile(); // load self lib
+
     }
 
-    
+
     @Override
     protected String[] getArguments() {
-
-        if(mBundle != null) {
-            //Log.i(TAG, mBundle.getString("args"));
-            String[] args = {mBundle.getString("args")};
-            return args;
+        String args = getIntent().getStringExtra("args");
+        if (null != args && !"".equals(args)) {
+            //Log.i(TAG, args);
+            return new String[]{args};
         } else {
             return super.getArguments();
         }
@@ -60,9 +55,9 @@ public class TermuxSDLActivity extends SDLActivity {
     @Override
     protected String getMainSharedObject() {
 
-        if (!pathname.equals("")) {
+        if (null != sdlmain && !"".equals(sdlmain)) {
             //Log.i(TAG, pathname);
-            return pathname;
+            return sdlmain;
         } else {
             return super.getMainSharedObject();
         }
@@ -71,11 +66,9 @@ public class TermuxSDLActivity extends SDLActivity {
 
     public void loadLibFile() {
 
-        String sdlmain = mBundle.getString("sdlmain");
-        if (sdlmain == null || sdlmain.equals("")) return ;
-        String libDir = getCacheDir().getParentFile().getAbsolutePath() + "/" + "tmpdir";
+        if (null == sdlmain || "".equals(sdlmain)) return ;
+        String libDir = getCacheDir().getParentFile().getAbsolutePath() + "/tmpdir";
         String libFile = libDir + "/" + (new File(sdlmain)).getName();
-        pathname = libFile;
 
         if ((new File(sdlmain)).exists()) {
             if (!(new File(libDir)).exists()) {
@@ -85,21 +78,11 @@ public class TermuxSDLActivity extends SDLActivity {
             try {
                 Util.copyFile(new File(sdlmain), new File(libFile));
                 Runtime.getRuntime().exec("chmod 755 " + libFile).waitFor();
+                sdlmain = libFile;
+
             } catch (Exception ex) {
-                System.out.println("Error: " + ex.getMessage());
                 Log.e(TAG, "copy sdlmain failed " + ex);
                 showErrorDialog(ex.getMessage());
-            }
-            try {
-                //System.load(libFile);
-                String pwd = new File(sdlmain).getParentFile().getAbsolutePath();
-                //Log.i(TAG, "chdir to " + pwd);
-                JNI.chDir(pwd);
-                JNI.setEnv("PWD", pwd, true);
-            } catch (UnsatisfiedLinkError e) {
-                System.out.println("Error: " + e.getMessage());
-                Log.e(TAG, "Native code library failed to load.\n" + e);
-                showErrorDialog(e.getMessage());
             }
         }
     }
@@ -118,9 +101,11 @@ public class TermuxSDLActivity extends SDLActivity {
     }
 
     public void deleteLibFile() {
-        File file = new File(pathname);
-        if (file.exists()) {
-            file.delete();
+        if (null != sdlmain && !"".equals(sdlmain)) {
+            File file = new File(sdlmain);
+            if (file.exists()) {
+                file.delete();
+            }
         }
     }
 
@@ -148,6 +133,7 @@ public class TermuxSDLActivity extends SDLActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 

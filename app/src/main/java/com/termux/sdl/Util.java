@@ -15,20 +15,20 @@ public final class Util {
 
     private static final String TAG = "Termux SDL JNI";
 
-    public static void copyDirectory(File sourceLocation , File targetLocation) throws IOException {
-        if (sourceLocation.isDirectory()) {
-            if (!targetLocation.exists()) {
-                targetLocation.mkdir();
+    public static void copyDirectory(File source , File target) throws IOException {
+        if (source.isDirectory()) {
+            if (!target.exists()) {
+                target.mkdir();
             }
 
-            String[] children = sourceLocation.list();
+            String[] children = source.list();
             for (int i=0; i < children.length; i++) {
-                copyDirectory(new File(sourceLocation, children[i]),
-                              new File(targetLocation, children[i]));
+                copyDirectory(new File(source, children[i]),
+                              new File(target, children[i]));
             }
         } else {
-            InputStream in = new FileInputStream(sourceLocation);
-            OutputStream out = new FileOutputStream(targetLocation);
+            InputStream in = new FileInputStream(source);
+            OutputStream out = new FileOutputStream(target);
 
             // Copy the bits from instream to outstream
             byte[] buf = new byte[1024 * 1024];

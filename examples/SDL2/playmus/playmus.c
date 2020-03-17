@@ -90,7 +90,11 @@ int main(int argc, char *argv[]) {
 //    if ( rwops ) {
 //        music = Mix_LoadMUS_RW(SDL_RWFromFile(argv[i], "rb"), SDL_TRUE);
 //    } else {
-    music = Mix_LoadMUS("/sdcard/SDL2/playmus/CrazyDream.ogg");
+	char pathname[1024] = "/sdcard/SDL2/playmus/CrazyDream.ogg";
+	if(argc >= 2) {
+		strncpy(pathname, argv[1], strlen(argv[1]));
+	}
+    music = Mix_LoadMUS(pathname);
 //    }
 
     if ( music == NULL ) {

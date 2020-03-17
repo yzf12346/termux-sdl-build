@@ -26,8 +26,7 @@ public class TermuxSDLActivity extends SDLActivity {
         super.onCreate(savedInstanceState);
 
         String[] permission = new String[] {
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.INTERNET
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
         };
 
         for (String perm:permission) {

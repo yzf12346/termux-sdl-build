@@ -1,6 +1,6 @@
 #
 # SDL application Makefile
-# type without args to build
+# type args to build
 # type run to execute
 # type clean to clean sources
 # type log to check application log
@@ -19,6 +19,9 @@ LDFLAGS = -shared -L${TERMUX_PREFIX}/lib -lSDL2 -lSDL2_image -llog -lm
 
 SDLRUN = am start $(shell am 2>&1| grep -q '\-\-user' && echo '--user 0') -n com.termux.sdl/.TermuxSDLActivity -e sdlmain
 
+# change /sdcard/SDL2/showimage/picture.jpg to your image path
+ARGS = --es args "/sdcard/SDL2/showimage/picture.jpg"
+
 OBJS = $(TARGET).o
 
 $(TARGET): $(OBJS)
@@ -27,8 +30,9 @@ $(TARGET): $(OBJS)
 clean:
 		rm -f $(OBJS) lib$(TARGET).so
 
+ 
 run: $(TARGET)
-		$(SDLRUN) $(PWD)/lib$(TARGET).so
+		$(SDLRUN) $(PWD)/lib$(TARGET).so $(ARGS)
 
 log:
 	logcat -d | grep SDL

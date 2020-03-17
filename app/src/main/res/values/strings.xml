@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">termux-sdl</string>
+    <string name="native_app_name">termux-native</string>
     <string name="action_settings">setting</string>
 </resources>

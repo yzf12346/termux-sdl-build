@@ -1,4 +1,4 @@
-# Copyright (C) 2009 The Android Open Source Project
+# Copyright (C) 2010 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,16 +13,19 @@
 # limitations under the License.
 #
 
+LOCAL_PATH := $(call my-dir)
 
-PROJ_PATH := $(call my-dir)
+include $(CLEAR_VARS)
 
-include $(PROJ_PATH)/SDL2/Android.mk
-include $(PROJ_PATH)/SDL2_image/Android.mk
-include $(PROJ_PATH)/SDL2_mixer/Android.mk
-include $(PROJ_PATH)/SDL2_net/Android.mk
-include $(PROJ_PATH)/SDL2_ttf/Android.mk
-include $(PROJ_PATH)/native_loader/Android.mk
-include $(PROJ_PATH)/demo/Android.mk
-include $(PROJ_PATH)/src/Android.mk
+LOCAL_MODULE    := native_loader
+LOCAL_SRC_FILES := loader.cpp
+LOCAL_CFLAGS    := -Wall
+LOCAL_LDLIBS    := -llog -landroid
+LOCAL_STATIC_LIBRARIES := android_native_app_glue
+
+include $(BUILD_SHARED_LIBRARY)
+
+$(call import-module,android/native_app_glue)
+
 
 

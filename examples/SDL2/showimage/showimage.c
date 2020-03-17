@@ -58,12 +58,12 @@ int main(int argc, char *argv[]) {
     int i, w, h, done;
     SDL_Event event;
     const char *saveFile = NULL;
-#undef ANDROID
+
 #ifdef ANDROID
     static char *Aargv[] = {
 	"showimage",
 	//"-fullscreen",
-	"/storage/emulated/0/CCPlusPlusNIDE/sdl/showimage/picture.jpg",
+	"/storage/emulated/0/SDL2/showimage/picture.jpg",
     };
 
 #undef argv

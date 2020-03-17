@@ -37,8 +37,8 @@ public class TermuxSDLActivity extends SDLActivity {
         }
 
         sdlmain = getIntent().getStringExtra("sdlmain");
-
-        loadLibFile(); // load self lib
+        // load SDL lib to internal directory
+        loadLibFile(); 
 
     }
 
@@ -54,7 +54,7 @@ public class TermuxSDLActivity extends SDLActivity {
         }
     }
 
-
+  
     @Override
     protected String getMainSharedObject() {
         if (null != sdlmain && !"".equals(sdlmain)) {
@@ -68,10 +68,11 @@ public class TermuxSDLActivity extends SDLActivity {
 
     public void loadLibFile() {
         if (null == sdlmain || "".equals(sdlmain)) return ;
-        String libDir = getCacheDir().getParentFile().getAbsolutePath() + "/tmpdir";
-        String libFile = libDir + "/" + (new File(sdlmain)).getName();
-
+        
         if ((new File(sdlmain)).exists()) {
+            String libDir = getCacheDir().getParentFile().getAbsolutePath() + "/tmpdir";
+            String libFile = libDir + "/" + (new File(sdlmain)).getName();
+            
             if (!(new File(libDir)).exists()) {
                 (new File(libDir)).mkdir();
             }
@@ -90,22 +91,22 @@ public class TermuxSDLActivity extends SDLActivity {
 
   
 
-    private void restartActivity() {
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                SDLActivity.nativeSendQuit();
-                Intent intent = getIntent();
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK 
-                                                            | Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                overridePendingTransition(0, 0);
-                finish();
-
-                overridePendingTransition(0, 0);
-                startActivity(intent);
-            }
-        });
-    }
+//    private void restartActivity() {
+//        new Handler().post(new Runnable() {
+//            @Override
+//            public void run() {
+//                SDLActivity.nativeSendQuit();
+//                Intent intent = getIntent();
+//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK 
+//                                                            | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//                overridePendingTransition(0, 0);
+//                finish();
+//
+//                overridePendingTransition(0, 0);
+//                startActivity(intent);
+//            }
+//        });
+//    }
     
     
     @Override
@@ -160,7 +161,7 @@ public class TermuxSDLActivity extends SDLActivity {
 
         switch (item.getItemId()) {
             case R.id.action_settings:
-                restartActivity();
+                startActivity(new Intent(this, TermuxNativeActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);

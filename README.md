@@ -1,4 +1,5 @@
 # termux-sdl
+
 这是一个termux sdl插件，为编译SDL2和native app程序，examples来源于cctools
 
 ### 如何使用：
@@ -8,7 +9,14 @@
 
 解压examples.zip文件到/sdcard根目录(showimage和playmus需要绝对路径)
 
-进入examples的示例代码下，执行 make run
+```
+# 进入examples的示例代码下，执行 make run
+# 比如...
+cd /sdcard/examples/SDL2/draw2
+make run
+```
+
+ **** 
 
 This is a termux sdl plugin, for compiling SDL2 and native app programs, examples from cctools
 
@@ -19,7 +27,13 @@ Extract the headers.zip file and copy the SDL header file to /data/data/com.term
 
 Extract the examples.zip file to /sdacrd root directory (because showimage and playmus need absolute paths)
 
-Enter the demo code under examples and execute make run
+
+```
+# Enter the demo code under examples and execute make run
+# for example
+cd /sdcard/examples/SDL2/draw2
+make run
+```
 
 
 screenshot1.jpg

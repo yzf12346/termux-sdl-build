@@ -10,7 +10,20 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
+        
+        externalNativeBuild {
+            ndkBuild {
+                arguments "APP_PLATFORM=android-21","APP_STL=c++_static"
+                abiFilters 'arm64-v8a'
+            }
+            // cmake {
+            //     arguments "-DANDROID_APP_PLATFORM=android-16", "-DANDROID_STL=c++_static"
+            //     abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+            //     abiFilters 'arm64-v8a'
+            // }
+        }
     }
+    
     buildTypes {
         release {
             minifyEnabled false
@@ -23,16 +36,22 @@ android {
         abortOnError false
    }
    
-   externalNativeBuild{
-       ndkBuild{
-           path file("src/main/jni/Android.mk")
-       }
-
-       //cmake {
-       //    path "src/main/cpp/CMakeLists.txt"
-       //}
-    }
    
+   if (!project.hasProperty('EXCLUDE_NATIVE_LIBS')) {
+        sourceSets.main {
+            jniLibs.srcDir 'libs'
+        }
+        
+        externalNativeBuild {
+            ndkBuild {
+                path 'src/main/jni/Android.mk'
+            }
+            
+            // cmake {
+            //     path "src/main/cpp/CMakeLists.txt"
+            // }
+        }
+    }
 }
 
 dependencies {

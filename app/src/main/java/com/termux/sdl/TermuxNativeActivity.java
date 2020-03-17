@@ -13,7 +13,7 @@ public class TermuxNativeActivity extends Activity {
 
     //private static final String TAG = "TermuxNativeActivity";
 
-    // 
+    // the native app library
     private String nativeApp = "libnative_loader.so";
 
     // error message
@@ -33,7 +33,7 @@ public class TermuxNativeActivity extends Activity {
             //now run binary file
             startActivity(intent);
             finish();
-        }else {
+        } else {
             setContentView(R.layout.activity_native);
             TextView textView = findViewById(R.id.nativeTextView);
             if(errorMessage == null)

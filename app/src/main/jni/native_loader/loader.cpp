@@ -17,7 +17,6 @@
 
 
 #include <jni.h>
-
 #include <android/log.h>
 #include <android_native_app_glue.h>
 
@@ -39,7 +38,7 @@
 __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "\e[35m[%s:%s:\e[32mline:%d]\e[0m\t" fmt, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__);
 
 
-static char *get_app_pathname(char *conf, char *str, int size) {
+static char* get_app_pathname(char *conf, char *str, int size) {
     printf("Loading config file %s\n", conf);
     
     FILE *fp = fopen(conf, "rb");

@@ -35,8 +35,10 @@ public class TermuxSDLActivity extends SDLActivity {
             }
         }
 
+        // sdlmain = your_project/libxxx.so
         sdlmain = getIntent().getStringExtra("sdlmain");
-        // load SDL lib to internal directory
+        // loading SDL lib to internal directory
+        // to /data/user/0/com.termux.sdl/tmpdir/libxxx.so
         loadLibFile(); 
 
     }
@@ -79,8 +81,13 @@ public class TermuxSDLActivity extends SDLActivity {
             try {
                 Util.copyFile(new File(sdlmain), new File(libFile));
                 Runtime.getRuntime().exec("chmod 755 " + libFile).waitFor();
-                sdlmain = libFile;
                 
+                // Environment variables must be set, otherwise the program will not run correctly
+                String pwd = new File(sdlmain).getParentFile().getAbsolutePath();
+                JNI.chDir(pwd);
+                JNI.setEnv("PWD", pwd, true);
+                // sdlmain = /data/user/0/com.termux.sdl/tmpdir/libxxx.so
+                sdlmain = libFile;
             } catch (Exception ex) {
                 Log.e(TAG, "copy sdlmain failed " + ex);
                 showErrorDialog(ex.getMessage());
@@ -122,6 +129,7 @@ public class TermuxSDLActivity extends SDLActivity {
     }
 
     public void deleteLibFile() {
+        // delete /data/user/0/com.termux.sdl/tmpdir/libxxx.so
         if (null != sdlmain && !"".equals(sdlmain)) {
             File file = new File(sdlmain);
             if (file.exists()) {

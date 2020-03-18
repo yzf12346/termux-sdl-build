@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 public class TermuxNativeActivity extends Activity {
 
-    //private static final String TAG = "TermuxNativeActivity";
+    private static final String TAG = "TermuxNativeActivity";
 
     // the native app library
     private String nativeApp = "libnative_loader.so";
@@ -23,9 +23,11 @@ public class TermuxNativeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // nativeApp = your_project/libxxx.so
         nativeApp = getIntent().getStringExtra("nativeApp");
 
-        // load native lib to internal directory
+        // loading native lib to internal directory
+        // to /data/user/0/com.termux.sdl/tmpdir
         if(loadLibFile()) {
             Intent intent = new Intent(this, NativeActivity.class);
             //from jni: loader.cpp
@@ -46,6 +48,7 @@ public class TermuxNativeActivity extends Activity {
 
 
     public boolean loadLibFile() {
+        // lib must be exist
         if (null == nativeApp || "".equals(nativeApp)) return false;
         
         if ((new File(nativeApp)).exists()) {
@@ -59,6 +62,13 @@ public class TermuxNativeActivity extends Activity {
             try {
                 Util.copyFile(new File(nativeApp), new File(libFile));
                 Runtime.getRuntime().exec("chmod 755 " + libFile).waitFor();
+                
+                // Environment variables must be set, otherwise the program will not run correctly
+                String pwd = new File(nativeApp).getParentFile().getAbsolutePath();
+                Log.i(TAG, "chdir: " + pwd);
+                JNI.chDir(pwd);
+                JNI.setEnv("PWD", pwd, true);
+                // nativeApp = /data/user/0/com.termux.sdl/tmpdir/libxxx.so
                 nativeApp = libFile;
 
                 FileOutputStream conf = new FileOutputStream(libDir + "/native_loader.conf");
@@ -77,6 +87,7 @@ public class TermuxNativeActivity extends Activity {
 
 
     public void deleteLibFile() {
+        // delete /data/user/0/com.termux.sdl/tmpdir/libxxx.so
         if (null != nativeApp && !"".equals(nativeApp)) {
             File file = new File(nativeApp);
             if (file.exists()) {

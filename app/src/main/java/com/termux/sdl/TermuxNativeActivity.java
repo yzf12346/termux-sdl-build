@@ -1,13 +1,13 @@
 package com.termux.sdl;
 
 import android.app.Activity;
+import android.app.NativeActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import java.io.File;
-import android.content.Intent;
-import android.app.NativeActivity;
-import java.io.FileOutputStream;
 import android.widget.TextView;
+import java.io.File;
+import java.io.FileOutputStream;
 
 public class TermuxNativeActivity extends Activity {
 
@@ -91,7 +91,7 @@ public class TermuxNativeActivity extends Activity {
         if (null != nativeApp && !"".equals(nativeApp)) {
             File file = new File(nativeApp);
             if (file.exists()) {
-                file.delete();
+                Util.deleteFile(file);
             }
         }
     }

@@ -133,7 +133,7 @@ public class TermuxSDLActivity extends SDLActivity {
         if (null != sdlmain && !"".equals(sdlmain)) {
             File file = new File(sdlmain);
             if (file.exists()) {
-                file.delete();
+                Util.deleteFile(file);
             }
         }
     }

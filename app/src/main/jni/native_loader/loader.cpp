@@ -39,10 +39,10 @@
 __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "\e[35m[%s:%s:\e[32mline:%d]\e[0m\t" fmt, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__);
 
 
-static char *get_app_name(char *conf_name, char *str, int size) {
-    printf("Loading config file %s\n", conf_name);
+static char *get_app_pathname(char *conf, char *str, int size) {
+    printf("Loading config file %s\n", conf);
     
-    FILE *fp = fopen(conf_name, "rb");
+    FILE *fp = fopen(conf, "rb");
     if (fp != NULL) {
         char *pathname = fgets(str, size, fp);
         fclose(fp);
@@ -51,7 +51,7 @@ static char *get_app_name(char *conf_name, char *str, int size) {
         }
     }
 
-    LOGE("Can't open file %s\n", conf_name);
+    LOGE("Can't open file %s\n", conf);
     return NULL;
 }
 
@@ -103,10 +103,10 @@ void android_main(struct android_app *state) {
         printf("current path %s\n", buf);
 
         snprintf(conf_dir, sizeof(conf_dir), "%s/tmpdir/native_loader.conf", buf);
-        nativeApp = get_app_name(conf_dir, buf, sizeof(buf));
+        nativeApp = get_app_pathname(conf_dir, buf, sizeof(buf));
         if (!nativeApp) {
             LOGW("Fail-safe mode...\n");
-            nativeApp = get_app_name(
+            nativeApp = get_app_pathname(
                     "/data/user/0/com.termux.sdl/tmpdir/native_loader.conf", buf,
                     sizeof(buf));
             if (!nativeApp) {

@@ -54,6 +54,7 @@ static char* get_app_pathname(char *conf, char *str, int size) {
     return NULL;
 }
 
+
 /**
  * This is the main entry point of a native application that is using
  * android_native_app_glue.  It runs in its own thread, with its own

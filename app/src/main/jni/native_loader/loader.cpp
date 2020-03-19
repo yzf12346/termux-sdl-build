@@ -38,6 +38,11 @@
 __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "\e[35m[%s:%s:\e[32mline:%d]\e[0m\t" fmt, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__);
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 static char* get_app_pathname(char *conf, char *str, int size) {
     printf("Loading config file %s\n", conf);
     
@@ -143,3 +148,8 @@ void android_main(struct android_app *state) {
 
     dlclose(handle);
 }
+
+
+#ifdef __cplusplus
+};
+#endif /* end __cplusplus */

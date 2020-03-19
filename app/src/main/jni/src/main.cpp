@@ -43,10 +43,11 @@ extern "C" {
 #endif
 
 enum SDL_Libraries {
-    SDL_IMAGE,
-    SDL_MIXER,
-    SDL_NET,
-    SDL_TTF
+    SDL2,
+    SDL2_IMAGE,
+    SDL2_MIXER,
+    SDL2_NET,
+    SDL2_TTF
 };
 
  // fun setEnv()
@@ -94,18 +95,19 @@ JNIEXPORT jstring JNICALL Java_com_termux_sdl_JNI_getSDLVersion(JNIEnv *env,
     SDL_version version;
     
     switch(lib) {
-    case SDL_IMAGE:
+    case SDL2_IMAGE:
 	    SDL_IMAGE_VERSION(&version);
 	    break;
-    case SDL_MIXER:
+    case SDL2_MIXER:
 	    SDL_MIXER_VERSION(&version);
 	    break;
-    case SDL_NET:
+    case SDL2_NET:
 	    SDL_NET_VERSION(&version);
 	    break;
-    case SDL_TTF:
+    case SDL2_TTF:
 	    SDL_TTF_VERSION(&version);
 	    break;
+    case SDL2:
     default:
 	    SDL_GetVersion(&version);
 	    break;
@@ -119,5 +121,5 @@ JNIEXPORT jstring JNICALL Java_com_termux_sdl_JNI_getSDLVersion(JNIEnv *env,
 
 #ifdef __cplusplus
 };
-#endif
+#endif /* end __cplusplus */
 

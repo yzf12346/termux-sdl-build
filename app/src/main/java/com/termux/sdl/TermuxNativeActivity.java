@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.TextView;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class TermuxNativeActivity extends Activity {
 
@@ -76,9 +77,11 @@ public class TermuxNativeActivity extends Activity {
                 conf.write(nativeApp.getBytes());
                 conf.close();
 
-            } catch (Exception ex) {
-                errorMessage = ex.getMessage();
-                ex.printStackTrace();
+            } catch (IOException ex) {
+                Log.e(TAG, "copy file failed: " + ex.getMessage());
+                return false;
+            } catch (InterruptedException ex) {
+                Log.e(TAG, "exec cmd failed: " + ex.getMessage());
                 return false;
             }
         }

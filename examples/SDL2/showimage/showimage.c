@@ -62,8 +62,8 @@ int main(int argc, char *argv[]) {
 #ifdef ANDROID
     static char *Aargv[] = {
 	"showimage",
-	//"-fullscreen",
-	"/storage/emulated/0/CCPlusPlusNIDE/sdl/showimage/picture.jpg",
+	"-fullscreen",
+	"picture.jpg",
     };
 
 #undef argv
@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
     /* Check command line usage */
     if ( ! argv[1] ) {
         SDL_Log("Usage: %s [-fullscreen] [-save file.png] <image_file> ...\n", argv[0]);
-        return(1);
+        argv[1] = "picture.jpg";
     }
 
     flags = SDL_WINDOW_HIDDEN;

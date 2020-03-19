@@ -1,17 +1,24 @@
 package com.termux.sdl;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
 import org.libsdl.app.SDLActivity;
+import android.content.pm.PackageInfo;
+import java.io.IOException;
 
 public class TermuxSDLActivity extends SDLActivity {
 
@@ -20,7 +27,11 @@ public class TermuxSDLActivity extends SDLActivity {
     // the self lib pathname
     private String sdlmain = "libmain.so";
 
-    
+    // get the sdl2 libraries version
+    private enum SDLVersion {
+        SDL2, SDL2_image, SDL2_mixer, SDL2_net, SDL2_ttf;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +48,7 @@ public class TermuxSDLActivity extends SDLActivity {
 
         // sdlmain = your_project/libxxx.so
         sdlmain = getIntent().getStringExtra("sdlmain");
+        Log.i(TAG, "sdlmain: " + sdlmain);
         // loading SDL lib to internal directory
         // to /data/user/0/com.termux.sdl/tmpdir/libxxx.so
         loadLibFile(); 
@@ -55,7 +67,7 @@ public class TermuxSDLActivity extends SDLActivity {
         }
     }
 
-  
+
     @Override
     protected String getMainSharedObject() {
         if (null != sdlmain && !"".equals(sdlmain)) {
@@ -69,33 +81,38 @@ public class TermuxSDLActivity extends SDLActivity {
 
     public void loadLibFile() {
         if (null == sdlmain || "".equals(sdlmain)) return ;
-        
+
         if ((new File(sdlmain)).exists()) {
             String libDir = getCacheDir().getParentFile().getAbsolutePath() + "/tmpdir";
             String libFile = libDir + "/" + (new File(sdlmain)).getName();
-            
+
             if (!(new File(libDir)).exists()) {
                 (new File(libDir)).mkdir();
             }
-
+            
             try {
                 Util.copyFile(new File(sdlmain), new File(libFile));
                 Runtime.getRuntime().exec("chmod 755 " + libFile).waitFor();
                 
                 // Environment variables must be set, otherwise the program will not run correctly
                 String pwd = new File(sdlmain).getParentFile().getAbsolutePath();
+                Log.i(TAG, "chdir to: " + pwd);
                 JNI.chDir(pwd);
                 JNI.setEnv("PWD", pwd, true);
+                
                 // sdlmain = /data/user/0/com.termux.sdl/tmpdir/libxxx.so
                 sdlmain = libFile;
-            } catch (Exception ex) {
-                Log.e(TAG, "copy sdlmain failed " + ex);
+            } catch (IOException ex) {
+                Log.e(TAG, "copy file failed: " + ex.getMessage());
+                showErrorDialog(ex.getMessage());
+            } catch (InterruptedException ex) {
+                Log.e(TAG, "exec cmd failed: " + ex.getMessage());
                 showErrorDialog(ex.getMessage());
             }
         }
     }
 
-  
+
 
 //    private void restartActivity() {
 //        new Handler().post(new Runnable() {
@@ -113,8 +130,8 @@ public class TermuxSDLActivity extends SDLActivity {
 //            }
 //        });
 //    }
-    
-    
+
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -132,6 +149,7 @@ public class TermuxSDLActivity extends SDLActivity {
         // delete /data/user/0/com.termux.sdl/tmpdir/libxxx.so
         if (null != sdlmain && !"".equals(sdlmain)) {
             File file = new File(sdlmain);
+            Log.i(TAG, "delete sdlmain: " + file.getAbsolutePath());
             if (file.exists()) {
                 Util.deleteFile(file);
             }
@@ -162,7 +180,7 @@ public class TermuxSDLActivity extends SDLActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -170,7 +188,54 @@ public class TermuxSDLActivity extends SDLActivity {
             case R.id.action_settings:
                 startActivity(new Intent(this, TermuxNativeActivity.class));
                 break;
+            case R.id.action_about:
+                aboutDialog();
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private void aboutDialog() {
+        String versionName = null;    
+        try {
+            PackageManager pkg = getPackageManager();
+            PackageInfo info = pkg.getPackageInfo(getPackageName(), 0);
+            versionName = pkg.getApplicationLabel(info.applicationInfo) + ": " +info.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            versionName = e.getMessage();
+        }
+        final TextView textView = new TextView(this);
+        textView.setAutoLinkMask(Linkify.WEB_URLS);
+        textView.setLinksClickable(true);
+        textView.setTextSize(18f);
+        textView.setPadding(60, 60, 0, 0);
+        textView.setGravity(Gravity.CENTER_VERTICAL);
+
+        textView.setText(versionName + "\n"
+                       + getString(R.string.sdl_version) + ": " + JNI.getSDLVersion(SDLVersion.SDL2.ordinal()) + "\n" 
+                       + getString(R.string.sdl_image_version) + ": " + JNI.getSDLVersion(SDLVersion.SDL2_image.ordinal()) + "\n" 
+                       + getString(R.string.sdl_mixer_version) + ": " + JNI.getSDLVersion(SDLVersion.SDL2_mixer.ordinal()) + "\n" 
+                       + getString(R.string.sdl_net_version) + ": " + JNI.getSDLVersion(SDLVersion.SDL2_net.ordinal()) + "\n" 
+                       + getString(R.string.sdl_ttf_version) + ": " + JNI.getSDLVersion(SDLVersion.SDL2_ttf.ordinal()) + "\n"
+                       );
+
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
+        new AlertDialog.Builder(this)
+            .setTitle(getString(R.string.about_dialog))
+            .setView(textView)
+            .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            })
+            .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    dialog.dismiss();
+                }
+            }).show();
     }
 }

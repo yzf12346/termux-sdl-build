@@ -16,6 +16,7 @@ public final class Util {
     private static final String TAG = "Termux SDL JNI";
 
     public static void copyFile(File source , File target) throws IOException {
+        
         if (source.isDirectory()) {
             if (!target.exists()) {
                 target.mkdir();

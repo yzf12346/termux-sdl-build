@@ -35,6 +35,7 @@ cd /sdcard/examples/SDL2/draw2
 make run
 ```
 
+ **** 
 
 screenshot1.jpg
 ![image](https://raw.githubusercontent.com/Lzhiyong/termux-sdl/master/screenshots/screenshot1.jpg)

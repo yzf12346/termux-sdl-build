@@ -1802,7 +1802,7 @@ static int Internal_Android_JNI_FileOpen(SDL_RWops *ctx)
     struct LocalReferenceHolder refs = LocalReferenceHolder_Setup(__FUNCTION__);
 
     int result = 0;
-
+ 
     jmethodID mid;
     jobject context;
     jobject assetManager;
@@ -1813,7 +1813,8 @@ static int Internal_Android_JNI_FileOpen(SDL_RWops *ctx)
     jobject fd;
     jclass fdCls;
     jfieldID descriptor;
-
+    
+    
     JNIEnv *env = Android_JNI_GetEnv();
     if (!LocalReferenceHolder_Init(&refs, env)) {
         goto failure;
@@ -1863,6 +1864,7 @@ static int Internal_Android_JNI_FileOpen(SDL_RWops *ctx)
 
     if (0) {
 fallback:
+
         /* Disabled log message because of spam on the Nexus 7 */
         /* __android_log_print(ANDROID_LOG_DEBUG, "SDL", "Falling back to legacy InputStream method for opening file"); */
 
@@ -1876,7 +1878,7 @@ fallback:
         if (Android_JNI_ExceptionOccurred(SDL_FALSE)) {
             /* Try fallback to APK expansion files */
             inputStream = (*env)->CallStaticObjectMethod(env, mActivityClass, midOpenAPKExpansionInputStream, fileNameJString);
-
+            
             /* Exception is checked first because it always needs to be cleared.
              * If no exception occurred then the last SDL error message is kept.
              */
@@ -1925,7 +1927,7 @@ fallback:
     if (0) {
 failure:
         result = -1;
-
+       
         (*env)->DeleteGlobalRef(env, (jobject)ctx->hidden.androidio.fileNameRef);
 
         if(ctx->hidden.androidio.inputStreamRef != NULL) {

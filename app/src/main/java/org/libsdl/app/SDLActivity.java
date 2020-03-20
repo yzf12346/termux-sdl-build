@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
+import com.termux.sdl.JNI;
 
 /**
     SDL Activity
@@ -1092,6 +1093,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         try {
             ApplicationInfo applicationInfo = getContext().getPackageManager().getApplicationInfo(getContext().getPackageName(), PackageManager.GET_META_DATA);
             Bundle bundle = applicationInfo.metaData;
+            
             if (bundle == null) {
                 return false;
             }

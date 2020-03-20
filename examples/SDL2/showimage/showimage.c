@@ -26,6 +26,25 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+
+#include <android/log.h>
+
+#define LOG_TAG "SDL2_showimage"
+
+#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__) 
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__) 
+#define LOGW(...) __android_log_print(ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__) 
+#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__) 
+#define LOGF(...) __android_log_print(ANDROID_LOG_FATAL, LOG_TAG, __VA_ARGS__) 
+
+
+
+#define printf(fmt, ...)  \
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, \
+    "\e[35m[%s:%s:\e[32mline:%d]\e[0m\t" fmt, \
+    __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__);
+
+
 /* Draw a Gimpish background pattern to show transparency in the image */
 static void draw_background(SDL_Renderer *renderer, int w, int h) {
     SDL_Color col[2] = {
@@ -58,7 +77,8 @@ int main(int argc, char *argv[]) {
     int i, w, h, done;
     SDL_Event event;
     const char *saveFile = NULL;
-#undef ANDROID
+
+//#undef ANDROID
 #ifdef ANDROID
     static char *Aargv[] = {
 	"showimage",
@@ -76,7 +96,7 @@ int main(int argc, char *argv[]) {
 
     /* Check command line usage */
     if ( ! argv[1] ) {
-        SDL_Log("Usage: %s [-fullscreen] [-save file.png] <image_file> ...\n", argv[0]);
+        LOGI("Usage: %s [-fullscreen] [-save file.png] <image_file> ...\n", argv[0]);
         argv[1] = "picture.jpg";
     }
 
@@ -89,7 +109,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (SDL_CreateWindowAndRenderer(0, 0, flags, &window, &renderer) < 0) {
-        SDL_Log("SDL_CreateWindowAndRenderer() failed: %s\n", SDL_GetError());
+        LOGE("SDL_CreateWindowAndRenderer() failed: %s\n", SDL_GetError());
         return(2);
     }
 
@@ -107,7 +127,7 @@ int main(int argc, char *argv[]) {
         /* Open the image file */
         texture = IMG_LoadTexture(renderer, argv[i]);
         if (!texture) {
-            SDL_Log("Couldn't load %s: %s\n", argv[i], SDL_GetError());
+            LOGE("Couldn't load %s: %s\n", argv[i], SDL_GetError());
             continue;
         }
         SDL_QueryTexture(texture, NULL, NULL, &w, &h);
@@ -117,10 +137,10 @@ int main(int argc, char *argv[]) {
             SDL_Surface *surface = IMG_Load(argv[i]);
             if (surface) {
                 if ( IMG_SavePNG(surface, saveFile) < 0 ) {
-                    SDL_Log("Couldn't save %s: %s\n", saveFile, SDL_GetError());
+                    LOGE("Couldn't save %s: %s\n", saveFile, SDL_GetError());
                 }
             } else {
-                SDL_Log("Couldn't load %s: %s\n", argv[i], SDL_GetError());
+                LOGE("Couldn't load %s: %s\n", argv[i], SDL_GetError());
             }
         }
 

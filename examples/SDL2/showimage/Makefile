@@ -20,7 +20,7 @@ LDFLAGS = -shared -L${TERMUX_PREFIX}/lib -lSDL2 -lSDL2_image -llog -lm
 SDLRUN = am start $(shell am 2>&1| grep -q '\-\-user' && echo '--user 0') -n com.termux.sdl/.TermuxSDLActivity -e sdlmain
 
 # change /sdcard/SDL2/showimage/picture.jpg to your image path
-ARGS = --es args "/sdcard/SDL2/showimage/picture.jpg"
+ARGS = --es args "/sdcard/Pictures/DownloadPicture/test.jpg"
 
 OBJS = $(TARGET).o
 

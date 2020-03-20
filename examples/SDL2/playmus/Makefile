@@ -20,7 +20,7 @@ LDFLAGS = -shared -L${TERMUX_PREFIX}/lib -lSDL2 -lSDL2_mixer -llog -lm
 SDLRUN = am start $(shell am 2>&1| grep -q '\-\-user' && echo '--user 0') -n com.termux.sdl/.TermuxSDLActivity -e sdlmain
 
 # change /sdcard/Music/芒种-音阙诗听_赵方婧.flac to your song path
-ARGS = --es args "/sdcard/Music/芒种-音阙诗听_赵方婧.flac"
+ARGS = #--es args "/sdcard/Music/芒种-音阙诗听_赵方婧.flac"
 
 
 OBJS = $(TARGET).o

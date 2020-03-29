@@ -1,12 +1,17 @@
 <resources>
     <string name="app_name">termux-sdl</string>
     <string name="native_app_name">termux-native</string>
+    <string name="ffplay_app_name">termux-ffplay</string>
+    
     <string name="action_settings">setting</string>
+    <string name="action_ffplay">ffplay</string>
     <string name="action_about">about</string>
+    
     <string name="about_dialog">About</string>
     <string name="sdl_version">SDL2 version</string>
     <string name="sdl_image_version">SDL2_image version</string>
     <string name="sdl_mixer_version">SDL2_mixer version</string>
     <string name="sdl_net_version">SDL2_net version</string>
 	<string name="sdl_ttf_version">SDL2_ttf version</string>
+    <string name="sdl_gfx_version">SDL2_gfx version</string>
 </resources>

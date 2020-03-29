@@ -23,7 +23,11 @@ public class TermuxNativeActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+            finish();
+            return;
+        }
+        
         // nativeApp = your_project/libxxx.so
         nativeApp = getIntent().getStringExtra("nativeApp");
 
@@ -50,8 +54,8 @@ public class TermuxNativeActivity extends Activity {
 
     public boolean loadLibFile() {
         // lib must be exist
-        if (null == nativeApp || "".equals(nativeApp)) return false;
-        
+        if (nativeApp == null || nativeApp.isEmpty()) return false;
+        nativeApp = nativeApp.trim();
         if ((new File(nativeApp)).exists()) {
             String libDir = getCacheDir().getParentFile().getAbsolutePath() + "/tmpdir";
             String libFile = libDir + "/" + (new File(nativeApp)).getName();
@@ -91,7 +95,7 @@ public class TermuxNativeActivity extends Activity {
 
     public void deleteLibFile() {
         // delete /data/user/0/com.termux.sdl/tmpdir/libxxx.so
-        if (null != nativeApp && !"".equals(nativeApp)) {
+        if (nativeApp != null && !nativeApp.isEmpty()) {
             File file = new File(nativeApp);
             if (file.exists()) {
                 Util.deleteFile(file);
@@ -111,5 +115,6 @@ public class TermuxNativeActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         deleteLibFile();
+        finish();
     }
 }

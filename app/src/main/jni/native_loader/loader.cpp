@@ -16,26 +16,18 @@
  */
 
 
-#include <jni.h>
-#include <android/log.h>
-#include <android_native_app_glue.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <dlfcn.h>
 
-#define LOG_TAG "native-loader"
+#include <jni.h>
+#include <android_native_app_glue.h>
 
-#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__) 
-#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__) 
-#define LOGW(...) __android_log_print(ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__) 
-#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__) 
-#define LOGF(...) __android_log_print(ANDROID_LOG_FATAL, LOG_TAG, __VA_ARGS__) 
+#include "log.h"
 
-#define printf(fmt, ...)  \
-__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "\e[35m[%s:%s:\e[32mline:%d]\e[0m\t" fmt, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__);
+#define TAG "native-loader"
 
 
 #ifdef __cplusplus
@@ -44,7 +36,7 @@ extern "C" {
 
 
 static char* get_app_pathname(char *conf, char *str, int size) {
-    printf("Loading config file %s\n", conf);
+    LOGI(TAG, "Loading config file %s\n", conf);
     
     FILE *fp = fopen(conf, "rb");
     if (fp != NULL) {
@@ -55,7 +47,7 @@ static char* get_app_pathname(char *conf, char *str, int size) {
         }
     }
 
-    LOGE("Can't open file %s\n", conf);
+    LOGE(TAG, "Can't open file %s\n", conf);
     return NULL;
 }
 
@@ -66,12 +58,21 @@ static char* get_app_pathname(char *conf, char *str, int size) {
  * event loop for receiving input events and doing other things.
  */
 void android_main(struct android_app *state) {
+    
     char conf_dir[PATH_MAX];
     char buf[PATH_MAX];
     char *nativeApp = NULL;
 
-    // Make sure glue isn't stripped.
-    app_dummy();
+    
+    /**
+     * Dummy function that used to be used to prevent the linker from stripping app
+     * glue code. No longer necessary, since __attribute__((visibility("default")))
+     * does this for us.
+     * __attribute__((deprecated("Calls to app_dummy are no longer necessary. See "
+               "https://github.com/android-ndk/ndk/issues/381."))) void
+     */
+     // Make sure glue isn't stripped.
+    //app_dummy();
 
     JNIEnv *env = NULL;
     state->activity->vm->AttachCurrentThread(&env, 0);
@@ -92,7 +93,7 @@ void android_main(struct android_app *state) {
     if (jparams) {
         const char *param = env->GetStringUTFChars(jparams, 0);
 
-        printf("nativeApp = %s\n", param);
+        LOGI(TAG, "nativeApp = %s\n", param);
 
         if (param != NULL) {
             nativeApp = strdup(param);
@@ -105,17 +106,17 @@ void android_main(struct android_app *state) {
 
     if (!nativeApp) {
         getcwd(buf, sizeof(buf));
-        printf("current path %s\n", buf);
+        LOGI(TAG, "current path %s\n", buf);
 
         snprintf(conf_dir, sizeof(conf_dir), "%s/tmpdir/native_loader.conf", buf);
         nativeApp = get_app_pathname(conf_dir, buf, sizeof(buf));
         if (!nativeApp) {
-            LOGW("Fail-safe mode...\n");
+            LOGW(TAG, "Fail-safe mode...\n");
             nativeApp = get_app_pathname(
                     "/data/user/0/com.termux.sdl/tmpdir/native_loader.conf", buf,
                     sizeof(buf));
             if (!nativeApp) {
-                LOGE("Can't load native_loader.conf!\n");
+                LOGE(TAG, "Can't load native_loader.conf!\n");
                 return;
             }
         }
@@ -126,11 +127,11 @@ void android_main(struct android_app *state) {
     void (*new_main)(struct android_app *state);
     const char *error = NULL;
 
-    printf("Load native activity %s\n", nativeApp);
+    LOGI(TAG, "Load native activity %s\n", nativeApp);
 
     handle = dlopen(nativeApp, RTLD_LAZY);
     if (!handle) {
-        LOGE("%s\n", dlerror());
+        LOGE(TAG, "%s\n", dlerror());
         return;
     }
 
@@ -138,11 +139,11 @@ void android_main(struct android_app *state) {
 
     *(void **) (&new_main) = dlsym(handle, "android_main");
     if ((error = dlerror()) != NULL) {
-        LOGE("%s\n", error);
+        LOGE(TAG, "%s\n", error);
         return;
     }
 
-    printf("native app start...\n");
+    LOGI(TAG, "native app start...\n");
 
     (*new_main)(state);
 
@@ -152,4 +153,4 @@ void android_main(struct android_app *state) {
 
 #ifdef __cplusplus
 };
-#endif /* end __cplusplus */
+#endif /* __cplusplus */

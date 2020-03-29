@@ -19,16 +19,18 @@ include $(CLEAR_VARS)
 LOCAL_CPP_EXTENSION := .cpp .cc
 LOCAL_CXX_FLAGS  := -std=c++14
 LOCAL_MODULE     := termux_sdl
-LOCAL_C_INCLUDES := -ISDL2/include \
-                    -ISDL2_image \
-                    -ISDL2_mixer \
-                    -ISDL2_net \
-                    -ISDL2_ttf
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/../SDL2/include \
+                    $(LOCAL_PATH)/../SDL2_image \
+                    $(LOCAL_PATH)/../SDL2_mixer \
+                    $(LOCAL_PATH)/../SDL2_net \
+                    $(LOCAL_PATH)/../SDL2_ttf \
+                    $(LOCAL_PATH)/../SDL2_gfx
+                   
 
 
 LOCAL_SRC_FILES  := main.cpp 
 
-LOCAL_SHARED_LIBRARIES := SDL2 SDL2_image SDL2_mixer SDL2_net SDL2_ttf
+LOCAL_SHARED_LIBRARIES := SDL2 SDL2_image SDL2_mixer SDL2_net SDL2_ttf SDL2_gfx         
 LOCAL_LDLIBS := -lz -llog
 
 ifeq ($(TARGET_ARCH_ABI),x86)

@@ -13,16 +13,6 @@
 # limitations under the License.
 #
 
-
-PROJ_PATH := $(call my-dir)
-
-include $(PROJ_PATH)/SDL2/Android.mk
-include $(PROJ_PATH)/SDL2_image/Android.mk
-include $(PROJ_PATH)/SDL2_mixer/Android.mk
-include $(PROJ_PATH)/SDL2_net/Android.mk
-include $(PROJ_PATH)/SDL2_ttf/Android.mk
-include $(PROJ_PATH)/native_loader/Android.mk
-include $(PROJ_PATH)/demo/Android.mk
-include $(PROJ_PATH)/src/Android.mk
+include $(call all-subdir-makefiles)
 
 

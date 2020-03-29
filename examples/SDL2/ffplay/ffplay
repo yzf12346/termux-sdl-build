@@ -1,0 +1,79 @@
+#!/bin/bash
+
+# for termux to exec ffplay command
+# put ffplay script to /data/data/com.termux/files/usr/bin
+# for example 2 speed playback: ffplay -af "atempo=2.0" -vf "setpts=0.5*PTS" -i /sdcard/video/test.mp4
+
+
+function print_usage() {
+	echo "Simple media player"
+	echo "Usage: ffplay [options] input_file"
+	echo "Main options:"
+	echo "-L                  show license"
+	echo "-h topic            show help"
+	echo "-? topic            show help"
+	echo "-help topic         show help"
+	echo "--help topic        show help"
+	echo "-version            show version"
+	echo "-buildconf          show build configuration"
+	echo "-formats            show available formats"
+	echo "-muxers             show available muxers"
+	echo "-demuxers           show available demuxers"
+	echo "-devices            show available devices"
+	echo "-codecs             show available codecs"
+	echo "-decoders           show available decoders"
+	echo "-encoders           show available encoders"
+	echo "-bsfs               show available bit stream filters"
+	echo "-protocols          show available protocols"
+	echo "-filters            show available filters"
+	echo "-pix_fmts           show available pixel formats"
+	echo "-layouts            show standard channel layouts"
+	echo "-sample_fmts        show available audio sample formats"
+	echo "-colors             show available color names"
+	echo "-loglevel loglevel  set logging level"
+	echo "-v loglevel         set logging level"
+	echo "-report             generate a report"
+	echo "-max_alloc bytes    set maximum size of a single allocated block"
+	echo "-sources device     list sources of the input device"
+	echo "-sinks device       list sinks of the output device"
+	echo "-x width            force displayed width"
+	echo "-y height           force displayed height"
+	echo "-s size             set frame size (WxH or abbreviation)"
+	echo "-fs                 force full screen"
+	echo "-an                 disable audio"
+	echo "-vn                 disable video"
+	echo "-sn                 disable subtitling"
+	echo "-ss pos             seek to a given position in seconds"
+	echo "-t duration         play  "duration" seconds of audio/video"
+	echo "-bytes val          seek by bytes 0=off 1=on -1=auto"
+	echo "-nodisp             disable graphical display"
+	echo "-noborder           borderless window"
+	echo "-volume volume      set startup volume 0=min 100=max"
+	echo "-f fmt              force format"
+	echo "-window_title window title  set window title"
+	echo "-af filter_graph    set audio filters"
+	echo "-showmode mode      select show mode (0 = video, 1 = waves, 2 = RDFT)"
+	echo "-i input_file       read specified file"
+	echo "-codec decoder_name  force decoder"
+	echo "-autorotate         automatically rotate video"
+
+}
+
+
+# start playing function
+function start_play() {
+	if [ $# -ne 0 ];
+	then
+		ARGS=$@
+	else
+		print_usage
+		exit 
+	fi
+
+	am start -S $(shell am 2>&1| grep -q '\-\-user' && echo '--user 0') -n com.termux.sdl/.TermuxFFplayActivity --es argv "${ARGS}"
+}
+
+# start...
+start_play $@
+
+

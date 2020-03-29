@@ -7,9 +7,16 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         android:showAsAction="never" />
+    
+    <item
+        android:id="@+id/action_ffplay"
+        android:orderInCategory="200"
+        android:title="@string/action_ffplay"
+        android:showAsAction="never" />
+    
     <item
         android:id="@+id/action_about"
-        android:orderInCategory="200"
+        android:orderInCategory="300"
         android:title="@string/action_about"
         android:showAsAction="never" />
 </menu>

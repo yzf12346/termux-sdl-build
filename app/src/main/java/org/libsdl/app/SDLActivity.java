@@ -167,6 +167,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
             "SDL2_mixer",
             "SDL2_net",
             "SDL2_ttf",
+            "SDL2_gfx",
             "main"
         };
     }
@@ -464,7 +465,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         }
 
         SDLActivity.nativeQuit();
-        
+        System.exit(0);
         super.onDestroy();
     }
 

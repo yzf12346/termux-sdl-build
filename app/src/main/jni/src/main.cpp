@@ -20,23 +20,16 @@
 #include <unistd.h>
 #include <android/log.h>
 
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
-#include <SDL_net.h>
-#include <SDL_ttf.h>
+#include "SDL.h"
+#include "SDL_image.h"
+#include "SDL_mixer.h"
+#include "SDL_net.h"
+#include "SDL_ttf.h"
+#include "SDL2_gfxPrimitives.h"
 
-#define LOG_TAG "System.out"
+#include "log.h"
 
-#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__) 
-#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__) 
-#define LOGW(...) __android_log_print(ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__) 
-#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__) 
-#define LOGF(...) __android_log_print(ANDROID_LOG_FATAL, LOG_TAG, __VA_ARGS__) 
-
-#define printf(fmt, ...)  \
-__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "\e[35m[%s:%s:\e[32mline:%d]\e[0m\t" fmt, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__);
-
+#define TAG "Termux_sdl"
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,7 +40,8 @@ enum SDL_Libraries {
     SDL2_IMAGE,
     SDL2_MIXER,
     SDL2_NET,
-    SDL2_TTF
+    SDL2_TTF,
+    SDL2_GFX
 };
 
  // fun setEnv()
@@ -55,7 +49,7 @@ JNIEXPORT jint JNICALL Java_com_termux_sdl_JNI_setEnv(JNIEnv *env, jobject thiz,
                                 jstring name, jstring value, jboolean overwrite){
     const char *_name  = env->GetStringUTFChars(name, NULL);
     const char *_value = env->GetStringUTFChars(value, NULL);
-
+    LOGI(TAG, "name: %s\nvalue:.%s\n", _name, _value);
     return setenv(_name, _value, overwrite);
 }
 
@@ -107,6 +101,9 @@ JNIEXPORT jstring JNICALL Java_com_termux_sdl_JNI_getSDLVersion(JNIEnv *env,
     case SDL2_TTF:
 	    SDL_TTF_VERSION(&version);
 	    break;
+    case SDL2_GFX:
+        SDL_GFX_VERSION(&version);
+	    break;
     case SDL2:
     default:
 	    SDL_GetVersion(&version);
@@ -120,6 +117,6 @@ JNIEXPORT jstring JNICALL Java_com_termux_sdl_JNI_getSDLVersion(JNIEnv *env,
 
 
 #ifdef __cplusplus
-};
-#endif /* end __cplusplus */
+}
+#endif /* __cplusplus */
 

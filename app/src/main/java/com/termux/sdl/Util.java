@@ -15,17 +15,17 @@ public final class Util {
 
     private static final String TAG = "Termux SDL JNI";
 
-    public static void copyFile(File source , File target) throws IOException {
-        
-        if (source.isDirectory()) {
-            if (!target.exists()) {
+    public static void copyFile(File source, File target) throws IOException {
+
+        if(source.isDirectory()) {
+            if(!target.exists()) {
                 target.mkdir();
             }
 
             String[] children = source.list();
-            for (int i=0; i < children.length; i++) {
+            for(int i = 0; i < children.length; i++) {
                 copyFile(new File(source, children[i]),
-                              new File(target, children[i]));
+                         new File(target, children[i]));
             }
         } else {
             InputStream in = new FileInputStream(source);
@@ -34,7 +34,7 @@ public final class Util {
             // Copy the bits from instream to outstream
             byte[] buf = new byte[1024 * 1024];
             int len = 0;
-            while ((len = in.read(buf)) > 0) {
+            while((len = in.read(buf)) > 0) {
                 out.write(buf, 0, len);
             }
             in.close();
@@ -43,16 +43,16 @@ public final class Util {
     }
 
     public static void deleteFile(File file) {
-        if (file.isDirectory()) {
-            if (file.list().length == 0) {
+        if(file.isDirectory()) {
+            if(file.list().length == 0) {
                 file.delete();
             } else {
                 String files[] = file.list();
-                for (String temp: files) {
+                for(String temp : files) {
                     File fileDelete = new File(file, temp);
                     deleteFile(fileDelete);
                 }
-                if (file.list().length == 0) {
+                if(file.list().length == 0) {
                     file.delete();
                 }
             }
@@ -69,18 +69,18 @@ public final class Util {
 //    }
 
 
-    public static boolean unpackZip(InputStream in, String to) {       
+    public static boolean unpackZip(InputStream in, String to) {
         ZipInputStream zipInput = null;
         try {
             OutputStream out = null;
-            zipInput = new ZipInputStream(new BufferedInputStream(in));          
+            zipInput = new ZipInputStream(new BufferedInputStream(in));
             ZipEntry entry = null;
             byte[] buffer = new byte[1024];
 
-            while ((entry = zipInput.getNextEntry()) != null) {
+            while((entry = zipInput.getNextEntry()) != null) {
                 Log.i(TAG, "Unzipping file " + entry.getName());
 
-                if (entry.isDirectory()) {
+                if(entry.isDirectory()) {
                     File file = new File(to + "/" + entry.getName());
                     file.mkdirs();
                     continue;
@@ -88,15 +88,15 @@ public final class Util {
 
                 out = new FileOutputStream(to + "/" + entry.getName());
 
-                for (int count = zipInput.read(buffer); count > 0; count = zipInput.read(buffer)) {
+                for(int count = zipInput.read(buffer); count > 0; count = zipInput.read(buffer)) {
                     out.write(buffer, 0, count);
                 }
 
-                out.close();               
+                out.close();
                 zipInput.closeEntry();
             }
             zipInput.close();
-        } catch (IOException e) {
+        } catch(IOException e) {
             e.printStackTrace();
             return false;
         }

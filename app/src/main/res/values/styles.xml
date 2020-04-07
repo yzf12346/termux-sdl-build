@@ -6,6 +6,33 @@
         <item name="android:colorPrimary">@color/colorPrimary</item>
         <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="android:colorAccent">@color/colorAccent</item>
+
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+
     </style>
+    
+    
+    <style name="AppTheme.ffplay" parent="@android:style/Theme.Material.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:colorPrimary">@color/colorPrimary</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:colorAccent">@color/colorAccent</item>
+
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+
+        <item name="android:actionBarStyle">@style/ActionbarStyle</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+    
+    <style name="ActionbarStyle" parent="@android:style/Widget.Material.Light.ActionBar">
+        <!-- 设置actionbar 背景色 透明 -->
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:backgroundStacked">@color/colorAccent</item>
+        <item name="android:backgroundSplit">@android:color/transparent</item>
+    </style>
+    
 
 </resources>

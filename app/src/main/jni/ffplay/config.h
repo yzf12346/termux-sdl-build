@@ -6,7 +6,7 @@
 #define CONFIG_THIS_YEAR 2019
 #define FFMPEG_DATADIR "/data/data/com.termux/files/home/ffmpeg/share/ffmpeg"
 #define AVCONV_DATADIR "/data/data/com.termux/files/home/ffmpeg/share/ffmpeg"
-#define CC_IDENT "clang version 7.0.0"
+#define CC_IDENT "clang version 9.0.0"
 #define av_restrict restrict
 #define EXTERN_PREFIX ""
 #define EXTERN_ASM 

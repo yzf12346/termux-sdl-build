@@ -34,6 +34,11 @@
     android:name="android.hardware.microphone"
     android:required="false" /> -->
 
+
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <!-- Allow access internet -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <!-- Allow writing to external storage -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- Allow access to Bluetooth devices -->
@@ -91,6 +96,7 @@
             android:name="com.termux.sdl.TermuxFFplayActivity"
             android:label="@string/ffplay_app_name"
             android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
+            android:theme="@style/AppTheme.ffplay"
             android:resizeableActivity="true"
             android:alwaysRetainTaskState="true">
             <intent-filter>

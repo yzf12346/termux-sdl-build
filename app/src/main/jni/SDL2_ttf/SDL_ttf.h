@@ -279,6 +279,10 @@ extern DECLSPEC int TTF_GetFontKerningSize(TTF_Font *font, int prev_index, int i
 /* Get the kerning size of two glyphs */
 extern DECLSPEC int TTF_GetFontKerningSizeGlyphs(TTF_Font *font, Uint16 previous_ch, Uint16 ch);
 
+
+// 设置字体大小
+extern DECLSPEC void SDLCALL TTF_SetFontSize(TTF_Font *font, int ptsize);
+
 /* We'll use SDL for reporting errors */
 #define TTF_SetError    SDL_SetError
 #define TTF_GetError    SDL_GetError

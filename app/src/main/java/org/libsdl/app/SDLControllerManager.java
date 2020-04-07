@@ -20,9 +20,9 @@ public class SDLControllerManager {
     public static native int nativeSetupJNI();
 
     public static native int nativeAddJoystick(int device_id, String name, String desc,
-                                               int vendor_id, int product_id,
-                                               boolean is_accelerometer, int button_mask,
-                                               int naxes, int nhats, int nballs);
+            int vendor_id, int product_id,
+            boolean is_accelerometer, int button_mask,
+            int naxes, int nhats, int nballs);
     public static native int nativeRemoveJoystick(int device_id);
     public static native int nativeAddHaptic(int device_id, String name);
     public static native int nativeRemoveHaptic(int device_id);
@@ -39,16 +39,16 @@ public class SDLControllerManager {
     private static final String TAG = "SDLControllerManager";
 
     public static void initialize() {
-        if (mJoystickHandler == null) {
-            if (Build.VERSION.SDK_INT >= 19) {
+        if(mJoystickHandler == null) {
+            if(Build.VERSION.SDK_INT >= 19) {
                 mJoystickHandler = new SDLJoystickHandler_API19();
             } else {
                 mJoystickHandler = new SDLJoystickHandler_API16();
             }
         }
 
-        if (mHapticHandler == null) {
-            if (Build.VERSION.SDK_INT >= 26) {
+        if(mHapticHandler == null) {
+            if(Build.VERSION.SDK_INT >= 26) {
                 mHapticHandler = new SDLHapticHandler_API26();
             } else {
                 mHapticHandler = new SDLHapticHandler();
@@ -85,8 +85,7 @@ public class SDLControllerManager {
     /**
      * This method is called by SDL using JNI.
      */
-    public static void hapticStop(int device_id)
-    {
+    public static void hapticStop(int device_id) {
         mHapticHandler.stop(device_id);
     }
 
@@ -95,7 +94,7 @@ public class SDLControllerManager {
         InputDevice device = InputDevice.getDevice(deviceId);
         // We cannot use InputDevice.isVirtual before API 16, so let's accept
         // only nonnegative device ids (VIRTUAL_KEYBOARD equals -1)
-        if ((device == null) || (deviceId < 0)) {
+        if((device == null) || (deviceId < 0)) {
             return false;
         }
         int sources = device.getSources();
@@ -116,7 +115,7 @@ public class SDLControllerManager {
         return ((sources & InputDevice.SOURCE_CLASS_JOYSTICK) != 0 ||
                 ((sources & InputDevice.SOURCE_DPAD) == InputDevice.SOURCE_DPAD) ||
                 ((sources & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD)
-        );
+               );
     }
 
 }
@@ -155,14 +154,14 @@ class SDLJoystickHandler_API16 extends SDLJoystickHandler {
             // Some controllers, like the Moga Pro 2, return AXIS_GAS (22) for right trigger and AXIS_BRAKE (23) for left trigger - swap them so they're sorted in the right order for SDL
             int arg0Axis = arg0.getAxis();
             int arg1Axis = arg1.getAxis();
-            if (arg0Axis == MotionEvent.AXIS_GAS) {
+            if(arg0Axis == MotionEvent.AXIS_GAS) {
                 arg0Axis = MotionEvent.AXIS_BRAKE;
-            } else if (arg0Axis == MotionEvent.AXIS_BRAKE) {
+            } else if(arg0Axis == MotionEvent.AXIS_BRAKE) {
                 arg0Axis = MotionEvent.AXIS_GAS;
             }
-            if (arg1Axis == MotionEvent.AXIS_GAS) {
+            if(arg1Axis == MotionEvent.AXIS_GAS) {
                 arg1Axis = MotionEvent.AXIS_BRAKE;
-            } else if (arg1Axis == MotionEvent.AXIS_BRAKE) {
+            } else if(arg1Axis == MotionEvent.AXIS_BRAKE) {
                 arg1Axis = MotionEvent.AXIS_GAS;
             }
 
@@ -180,12 +179,12 @@ class SDLJoystickHandler_API16 extends SDLJoystickHandler {
     @Override
     public void pollInputDevices() {
         int[] deviceIds = InputDevice.getDeviceIds();
-        for(int i=0; i < deviceIds.length; ++i) {
+        for(int i = 0; i < deviceIds.length; ++i) {
             SDLJoystick joystick = getJoystick(deviceIds[i]);
-            if (joystick == null) {
+            if(joystick == null) {
                 joystick = new SDLJoystick();
                 InputDevice joystickDevice = InputDevice.getDevice(deviceIds[i]);
-                if (SDLControllerManager.isDeviceSDLJoystick(deviceIds[i])) {
+                if(SDLControllerManager.isDeviceSDLJoystick(deviceIds[i])) {
                     joystick.device_id = deviceIds[i];
                     joystick.name = joystickDevice.getName();
                     joystick.desc = getJoystickDescriptor(joystickDevice);
@@ -194,42 +193,41 @@ class SDLJoystickHandler_API16 extends SDLJoystickHandler {
 
                     List<InputDevice.MotionRange> ranges = joystickDevice.getMotionRanges();
                     Collections.sort(ranges, new RangeComparator());
-                    for (InputDevice.MotionRange range : ranges ) {
-                        if ((range.getSource() & InputDevice.SOURCE_CLASS_JOYSTICK) != 0) {
-                            if (range.getAxis() == MotionEvent.AXIS_HAT_X ||
-                                range.getAxis() == MotionEvent.AXIS_HAT_Y) {
+                    for(InputDevice.MotionRange range : ranges) {
+                        if((range.getSource() & InputDevice.SOURCE_CLASS_JOYSTICK) != 0) {
+                            if(range.getAxis() == MotionEvent.AXIS_HAT_X ||
+                                    range.getAxis() == MotionEvent.AXIS_HAT_Y) {
                                 joystick.hats.add(range);
-                            }
-                            else {
+                            } else {
                                 joystick.axes.add(range);
                             }
                         }
                     }
 
                     mJoysticks.add(joystick);
-                    SDLControllerManager.nativeAddJoystick(joystick.device_id, joystick.name, joystick.desc, getVendorId(joystickDevice), getProductId(joystickDevice), false, getButtonMask(joystickDevice), joystick.axes.size(), joystick.hats.size()/2, 0);
+                    SDLControllerManager.nativeAddJoystick(joystick.device_id, joystick.name, joystick.desc, getVendorId(joystickDevice), getProductId(joystickDevice), false, getButtonMask(joystickDevice), joystick.axes.size(), joystick.hats.size() / 2, 0);
                 }
             }
         }
 
         /* Check removed devices */
         ArrayList<Integer> removedDevices = new ArrayList<Integer>();
-        for(int i=0; i < mJoysticks.size(); i++) {
+        for(int i = 0; i < mJoysticks.size(); i++) {
             int device_id = mJoysticks.get(i).device_id;
             int j;
-            for (j=0; j < deviceIds.length; j++) {
-                if (device_id == deviceIds[j]) break;
+            for(j = 0; j < deviceIds.length; j++) {
+                if(device_id == deviceIds[j]) break;
             }
-            if (j == deviceIds.length) {
+            if(j == deviceIds.length) {
                 removedDevices.add(Integer.valueOf(device_id));
             }
         }
 
-        for(int i=0; i < removedDevices.size(); i++) {
+        for(int i = 0; i < removedDevices.size(); i++) {
             int device_id = removedDevices.get(i).intValue();
             SDLControllerManager.nativeRemoveJoystick(device_id);
-            for (int j=0; j < mJoysticks.size(); j++) {
-                if (mJoysticks.get(j).device_id == device_id) {
+            for(int j = 0; j < mJoysticks.size(); j++) {
+                if(mJoysticks.get(j).device_id == device_id) {
                     mJoysticks.remove(j);
                     break;
                 }
@@ -238,8 +236,8 @@ class SDLJoystickHandler_API16 extends SDLJoystickHandler {
     }
 
     protected SDLJoystick getJoystick(int device_id) {
-        for(int i=0; i < mJoysticks.size(); i++) {
-            if (mJoysticks.get(i).device_id == device_id) {
+        for(int i = 0; i < mJoysticks.size(); i++) {
+            if(mJoysticks.get(i).device_id == device_id) {
                 return mJoysticks.get(i);
             }
         }
@@ -248,28 +246,28 @@ class SDLJoystickHandler_API16 extends SDLJoystickHandler {
 
     @Override
     public boolean handleMotionEvent(MotionEvent event) {
-        if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) != 0) {
+        if((event.getSource() & InputDevice.SOURCE_JOYSTICK) != 0) {
             int actionPointerIndex = event.getActionIndex();
             int action = event.getActionMasked();
             switch(action) {
-                case MotionEvent.ACTION_MOVE:
-                    SDLJoystick joystick = getJoystick(event.getDeviceId());
-                    if ( joystick != null ) {
-                        for (int i = 0; i < joystick.axes.size(); i++) {
-                            InputDevice.MotionRange range = joystick.axes.get(i);
-                            /* Normalize the value to -1...1 */
-                            float value = ( event.getAxisValue( range.getAxis(), actionPointerIndex) - range.getMin() ) / range.getRange() * 2.0f - 1.0f;
-                            SDLControllerManager.onNativeJoy(joystick.device_id, i, value );
-                        }
-                        for (int i = 0; i < joystick.hats.size(); i+=2) {
-                            int hatX = Math.round(event.getAxisValue( joystick.hats.get(i).getAxis(), actionPointerIndex ) );
-                            int hatY = Math.round(event.getAxisValue( joystick.hats.get(i+1).getAxis(), actionPointerIndex ) );
-                            SDLControllerManager.onNativeHat(joystick.device_id, i/2, hatX, hatY );
-                        }
+            case MotionEvent.ACTION_MOVE:
+                SDLJoystick joystick = getJoystick(event.getDeviceId());
+                if(joystick != null) {
+                    for(int i = 0; i < joystick.axes.size(); i++) {
+                        InputDevice.MotionRange range = joystick.axes.get(i);
+                        /* Normalize the value to -1...1 */
+                        float value = (event.getAxisValue(range.getAxis(), actionPointerIndex) - range.getMin()) / range.getRange() * 2.0f - 1.0f;
+                        SDLControllerManager.onNativeJoy(joystick.device_id, i, value);
                     }
-                    break;
-                default:
-                    break;
+                    for(int i = 0; i < joystick.hats.size(); i += 2) {
+                        int hatX = Math.round(event.getAxisValue(joystick.hats.get(i).getAxis(), actionPointerIndex));
+                        int hatY = Math.round(event.getAxisValue(joystick.hats.get(i + 1).getAxis(), actionPointerIndex));
+                        SDLControllerManager.onNativeHat(joystick.device_id, i / 2, hatX, hatY);
+                    }
+                }
+                break;
+            default:
+                break;
             }
         }
         return true;
@@ -278,7 +276,7 @@ class SDLJoystickHandler_API16 extends SDLJoystickHandler {
     public String getJoystickDescriptor(InputDevice joystickDevice) {
         String desc = joystickDevice.getDescriptor();
 
-        if (desc != null && !desc.isEmpty()) {
+        if(desc != null && !desc.isEmpty()) {
             return desc;
         }
 
@@ -392,8 +390,8 @@ class SDLJoystickHandler_API19 extends SDLJoystickHandler_API16 {
             0xFFFFFFFF,  // 16 -> ??
         };
         boolean[] has_keys = joystickDevice.hasKeys(keys);
-        for (int i = 0; i < keys.length; ++i) {
-            if (has_keys[i]) {
+        for(int i = 0; i < keys.length; ++i) {
+            if(has_keys[i]) {
                 button_mask |= masks[i];
             }
         }
@@ -405,26 +403,25 @@ class SDLHapticHandler_API26 extends SDLHapticHandler {
     @Override
     public void run(int device_id, float intensity, int length) {
         SDLHaptic haptic = getHaptic(device_id);
-        if (haptic != null) {
+        if(haptic != null) {
             Log.d("SDL", "Rtest: Vibe with intensity " + intensity + " for " + length);
-            if (intensity == 0.0f) {
+            if(intensity == 0.0f) {
                 stop(device_id);
                 return;
             }
 
             int vibeValue = Math.round(intensity * 255);
 
-            if (vibeValue > 255) {
+            if(vibeValue > 255) {
                 vibeValue = 255;
             }
-            if (vibeValue < 1) {
+            if(vibeValue < 1) {
                 stop(device_id);
                 return;
             }
             try {
                 haptic.vib.vibrate(VibrationEffect.createOneShot(length, vibeValue));
-            }
-            catch (Exception e) {
+            } catch(Exception e) {
                 // Fall back to the generic method, which uses DEFAULT_AMPLITUDE, but works even if
                 // something went horribly wrong with the Android 8.0 APIs.
                 haptic.vib.vibrate(length);
@@ -449,14 +446,14 @@ class SDLHapticHandler {
 
     public void run(int device_id, float intensity, int length) {
         SDLHaptic haptic = getHaptic(device_id);
-        if (haptic != null) {
+        if(haptic != null) {
             haptic.vib.vibrate(length);
         }
     }
 
     public void stop(int device_id) {
         SDLHaptic haptic = getHaptic(device_id);
-        if (haptic != null) {
+        if(haptic != null) {
             haptic.vib.cancel();
         }
     }
@@ -472,12 +469,12 @@ class SDLHapticHandler {
         // so the first controller seen by SDL matches what the receiver
         // considers to be the first controller
 
-        for (int i = deviceIds.length - 1; i > -1; i--) {
+        for(int i = deviceIds.length - 1; i > -1; i--) {
             SDLHaptic haptic = getHaptic(deviceIds[i]);
-            if (haptic == null) {
+            if(haptic == null) {
                 InputDevice device = InputDevice.getDevice(deviceIds[i]);
                 Vibrator vib = device.getVibrator();
-                if (vib.hasVibrator()) {
+                if(vib.hasVibrator()) {
                     haptic = new SDLHaptic();
                     haptic.device_id = deviceIds[i];
                     haptic.name = device.getName();
@@ -490,12 +487,12 @@ class SDLHapticHandler {
 
         /* Check VIBRATOR_SERVICE */
         Vibrator vib = (Vibrator) SDL.getContext().getSystemService(Context.VIBRATOR_SERVICE);
-        if (vib != null) {
+        if(vib != null) {
             hasVibratorService = vib.hasVibrator();
 
-            if (hasVibratorService) {
+            if(hasVibratorService) {
                 SDLHaptic haptic = getHaptic(deviceId_VIBRATOR_SERVICE);
-                if (haptic == null) {
+                if(haptic == null) {
                     haptic = new SDLHaptic();
                     haptic.device_id = deviceId_VIBRATOR_SERVICE;
                     haptic.name = "VIBRATOR_SERVICE";
@@ -508,25 +505,25 @@ class SDLHapticHandler {
 
         /* Check removed devices */
         ArrayList<Integer> removedDevices = new ArrayList<Integer>();
-        for(int i=0; i < mHaptics.size(); i++) {
+        for(int i = 0; i < mHaptics.size(); i++) {
             int device_id = mHaptics.get(i).device_id;
             int j;
-            for (j=0; j < deviceIds.length; j++) {
-                if (device_id == deviceIds[j]) break;
+            for(j = 0; j < deviceIds.length; j++) {
+                if(device_id == deviceIds[j]) break;
             }
 
-            if (device_id == deviceId_VIBRATOR_SERVICE && hasVibratorService) {
+            if(device_id == deviceId_VIBRATOR_SERVICE && hasVibratorService) {
                 // don't remove the vibrator if it is still present
-            } else if (j == deviceIds.length) {
+            } else if(j == deviceIds.length) {
                 removedDevices.add(device_id);
             }
         }
 
-        for(int i=0; i < removedDevices.size(); i++) {
+        for(int i = 0; i < removedDevices.size(); i++) {
             int device_id = removedDevices.get(i);
             SDLControllerManager.nativeRemoveHaptic(device_id);
-            for (int j=0; j < mHaptics.size(); j++) {
-                if (mHaptics.get(j).device_id == device_id) {
+            for(int j = 0; j < mHaptics.size(); j++) {
+                if(mHaptics.get(j).device_id == device_id) {
                     mHaptics.remove(j);
                     break;
                 }
@@ -535,8 +532,8 @@ class SDLHapticHandler {
     }
 
     protected SDLHaptic getHaptic(int device_id) {
-        for(int i=0; i < mHaptics.size(); i++) {
-            if (mHaptics.get(i).device_id == device_id) {
+        for(int i = 0; i < mHaptics.size(); i++) {
+            if(mHaptics.get(i).device_id == device_id) {
                 return mHaptics.get(i);
             }
         }
@@ -551,35 +548,35 @@ class SDLGenericMotionListener_API12 implements View.OnGenericMotionListener {
         float x, y;
         int action;
 
-        switch ( event.getSource() ) {
-            case InputDevice.SOURCE_JOYSTICK:
-            case InputDevice.SOURCE_GAMEPAD:
-            case InputDevice.SOURCE_DPAD:
-                return SDLControllerManager.handleJoystickMotionEvent(event);
+        switch(event.getSource()) {
+        case InputDevice.SOURCE_JOYSTICK:
+        case InputDevice.SOURCE_GAMEPAD:
+        case InputDevice.SOURCE_DPAD:
+            return SDLControllerManager.handleJoystickMotionEvent(event);
 
-            case InputDevice.SOURCE_MOUSE:
-                action = event.getActionMasked();
-                switch (action) {
-                    case MotionEvent.ACTION_SCROLL:
-                        x = event.getAxisValue(MotionEvent.AXIS_HSCROLL, 0);
-                        y = event.getAxisValue(MotionEvent.AXIS_VSCROLL, 0);
-                        SDLActivity.onNativeMouse(0, action, x, y, false);
-                        return true;
+        case InputDevice.SOURCE_MOUSE:
+            action = event.getActionMasked();
+            switch(action) {
+            case MotionEvent.ACTION_SCROLL:
+                x = event.getAxisValue(MotionEvent.AXIS_HSCROLL, 0);
+                y = event.getAxisValue(MotionEvent.AXIS_VSCROLL, 0);
+                SDLActivity.onNativeMouse(0, action, x, y, false);
+                return true;
 
-                    case MotionEvent.ACTION_HOVER_MOVE:
-                        x = event.getX(0);
-                        y = event.getY(0);
+            case MotionEvent.ACTION_HOVER_MOVE:
+                x = event.getX(0);
+                y = event.getY(0);
 
-                        SDLActivity.onNativeMouse(0, action, x, y, false);
-                        return true;
-
-                    default:
-                        break;
-                }
-                break;
+                SDLActivity.onNativeMouse(0, action, x, y, false);
+                return true;
 
             default:
                 break;
+            }
+            break;
+
+        default:
+            break;
         }
 
         // Event was not managed
@@ -598,8 +595,7 @@ class SDLGenericMotionListener_API12 implements View.OnGenericMotionListener {
         return false;
     }
 
-    public void reclaimRelativeMouseModeIfNeeded()
-    {
+    public void reclaimRelativeMouseModeIfNeeded() {
 
     }
 
@@ -622,10 +618,10 @@ class SDLGenericMotionListener_API24 extends SDLGenericMotionListener_API12 {
     public boolean onGenericMotion(View v, MotionEvent event) {
 
         // Handle relative mouse mode
-        if (mRelativeModeEnabled) {
-            if (event.getSource() == InputDevice.SOURCE_MOUSE) {
+        if(mRelativeModeEnabled) {
+            if(event.getSource() == InputDevice.SOURCE_MOUSE) {
                 int action = event.getActionMasked();
-                if (action == MotionEvent.ACTION_HOVER_MOVE) {
+                if(action == MotionEvent.ACTION_HOVER_MOVE) {
                     float x = event.getAxisValue(MotionEvent.AXIS_RELATIVE_X);
                     float y = event.getAxisValue(MotionEvent.AXIS_RELATIVE_Y);
                     SDLActivity.onNativeMouse(0, action, x, y, true);
@@ -656,20 +652,18 @@ class SDLGenericMotionListener_API24 extends SDLGenericMotionListener_API12 {
 
     @Override
     public float getEventX(MotionEvent event) {
-        if (mRelativeModeEnabled) {
+        if(mRelativeModeEnabled) {
             return event.getAxisValue(MotionEvent.AXIS_RELATIVE_X);
-        }
-        else {
+        } else {
             return event.getX(0);
         }
     }
 
     @Override
     public float getEventY(MotionEvent event) {
-        if (mRelativeModeEnabled) {
+        if(mRelativeModeEnabled) {
             return event.getAxisValue(MotionEvent.AXIS_RELATIVE_Y);
-        }
-        else {
+        } else {
             return event.getY(0);
         }
     }
@@ -685,56 +679,56 @@ class SDLGenericMotionListener_API26 extends SDLGenericMotionListener_API24 {
         float x, y;
         int action;
 
-        switch ( event.getSource() ) {
-            case InputDevice.SOURCE_JOYSTICK:
-            case InputDevice.SOURCE_GAMEPAD:
-            case InputDevice.SOURCE_DPAD:
-                return SDLControllerManager.handleJoystickMotionEvent(event);
+        switch(event.getSource()) {
+        case InputDevice.SOURCE_JOYSTICK:
+        case InputDevice.SOURCE_GAMEPAD:
+        case InputDevice.SOURCE_DPAD:
+            return SDLControllerManager.handleJoystickMotionEvent(event);
 
-            case InputDevice.SOURCE_MOUSE:
-            // DeX desktop mouse cursor is a separate non-standard input type.
-            case InputDevice.SOURCE_MOUSE | InputDevice.SOURCE_TOUCHSCREEN:
-                action = event.getActionMasked();
-                switch (action) {
-                    case MotionEvent.ACTION_SCROLL:
-                        x = event.getAxisValue(MotionEvent.AXIS_HSCROLL, 0);
-                        y = event.getAxisValue(MotionEvent.AXIS_VSCROLL, 0);
-                        SDLActivity.onNativeMouse(0, action, x, y, false);
-                        return true;
+        case InputDevice.SOURCE_MOUSE:
+        // DeX desktop mouse cursor is a separate non-standard input type.
+        case InputDevice.SOURCE_MOUSE | InputDevice.SOURCE_TOUCHSCREEN:
+            action = event.getActionMasked();
+            switch(action) {
+            case MotionEvent.ACTION_SCROLL:
+                x = event.getAxisValue(MotionEvent.AXIS_HSCROLL, 0);
+                y = event.getAxisValue(MotionEvent.AXIS_VSCROLL, 0);
+                SDLActivity.onNativeMouse(0, action, x, y, false);
+                return true;
 
-                    case MotionEvent.ACTION_HOVER_MOVE:
-                        x = event.getX(0);
-                        y = event.getY(0);
-                        SDLActivity.onNativeMouse(0, action, x, y, false);
-                        return true;
-
-                    default:
-                        break;
-                }
-                break;
-
-            case InputDevice.SOURCE_MOUSE_RELATIVE:
-                action = event.getActionMasked();
-                switch (action) {
-                    case MotionEvent.ACTION_SCROLL:
-                        x = event.getAxisValue(MotionEvent.AXIS_HSCROLL, 0);
-                        y = event.getAxisValue(MotionEvent.AXIS_VSCROLL, 0);
-                        SDLActivity.onNativeMouse(0, action, x, y, false);
-                        return true;
-
-                    case MotionEvent.ACTION_HOVER_MOVE:
-                        x = event.getX(0);
-                        y = event.getY(0);
-                        SDLActivity.onNativeMouse(0, action, x, y, true);
-                        return true;
-
-                    default:
-                        break;
-                }
-                break;
+            case MotionEvent.ACTION_HOVER_MOVE:
+                x = event.getX(0);
+                y = event.getY(0);
+                SDLActivity.onNativeMouse(0, action, x, y, false);
+                return true;
 
             default:
                 break;
+            }
+            break;
+
+        case InputDevice.SOURCE_MOUSE_RELATIVE:
+            action = event.getActionMasked();
+            switch(action) {
+            case MotionEvent.ACTION_SCROLL:
+                x = event.getAxisValue(MotionEvent.AXIS_HSCROLL, 0);
+                y = event.getAxisValue(MotionEvent.AXIS_VSCROLL, 0);
+                SDLActivity.onNativeMouse(0, action, x, y, false);
+                return true;
+
+            case MotionEvent.ACTION_HOVER_MOVE:
+                x = event.getX(0);
+                y = event.getY(0);
+                SDLActivity.onNativeMouse(0, action, x, y, true);
+                return true;
+
+            default:
+                break;
+            }
+            break;
+
+        default:
+            break;
         }
 
         // Event was not managed
@@ -753,26 +747,22 @@ class SDLGenericMotionListener_API26 extends SDLGenericMotionListener_API24 {
 
     @Override
     public boolean setRelativeMouseEnabled(boolean enabled) {
-        if (!SDLActivity.isDeXMode() || (Build.VERSION.SDK_INT >= 27)) {
-            if (enabled) {
+        if(!SDLActivity.isDeXMode() || (Build.VERSION.SDK_INT >= 27)) {
+            if(enabled) {
                 SDLActivity.getContentView().requestPointerCapture();
-            }
-            else {
+            } else {
                 SDLActivity.getContentView().releasePointerCapture();
             }
             mRelativeModeEnabled = enabled;
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
 
     @Override
-    public void reclaimRelativeMouseModeIfNeeded()
-    {
-        if (mRelativeModeEnabled && !SDLActivity.isDeXMode()) {
+    public void reclaimRelativeMouseModeIfNeeded() {
+        if(mRelativeModeEnabled && !SDLActivity.isDeXMode()) {
             SDLActivity.getContentView().requestPointerCapture();
         }
     }

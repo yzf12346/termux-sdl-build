@@ -319,6 +319,17 @@ static jmethodID midShouldMinimizeOnFocusLoss;
 static jmethodID midShowTextInput;
 static jmethodID midSupportsRelativeMouse;
 
+// 设置亮度
+static jmethodID midSetBrightness;
+// 获取亮度
+static jmethodID midGetBrightness;
+
+// 设置音量
+static jmethodID midSetVolume;
+// 获取音量
+static jmethodID midGetVolume;
+
+
 /* audio manager */
 static jclass mAudioManagerClass;
 
@@ -591,7 +602,17 @@ JNIEXPORT void JNICALL SDL_JAVA_INTERFACE(nativeSetupJNI)(JNIEnv *env, jclass cl
     midShouldMinimizeOnFocusLoss = (*env)->GetStaticMethodID(env, mActivityClass, "shouldMinimizeOnFocusLoss","()Z");
     midShowTextInput =  (*env)->GetStaticMethodID(env, mActivityClass, "showTextInput", "(IIII)Z");
     midSupportsRelativeMouse = (*env)->GetStaticMethodID(env, mActivityClass, "supportsRelativeMouse", "()Z");
-
+    
+    // 设置亮度
+    midSetBrightness = (*env)->GetStaticMethodID(env, mActivityClass, "setBrightness", "(I)V");
+    // 获取亮度
+    midGetBrightness = (*env)->GetStaticMethodID(env, mActivityClass, "getBrightness", "()I");
+    
+    // 设置音量
+    midSetVolume = (*env)->GetStaticMethodID(env, mActivityClass, "setVolume", "(I)V");
+    // 获取音量
+    midGetVolume = (*env)->GetStaticMethodID(env, mActivityClass, "getVolume", "()I");
+    
     if (!midClipboardGetText ||
         !midClipboardHasText ||
         !midClipboardSetText ||
@@ -620,6 +641,10 @@ JNIEXPORT void JNICALL SDL_JAVA_INTERFACE(nativeSetupJNI)(JNIEnv *env, jclass cl
         !midSetWindowStyle ||
         !midShouldMinimizeOnFocusLoss ||
         !midShowTextInput ||
+        !midSetBrightness || // 设置亮度
+        !midGetBrightness || // 获取亮度
+        !midSetVolume || // 设置音量
+        !midGetVolume || // 获取音量
         !midSupportsRelativeMouse) {
         __android_log_print(ANDROID_LOG_WARN, "SDL", "Missing some Java callbacks, do you have the latest version of SDLActivity.java?");
     }
@@ -1305,11 +1330,37 @@ JNIEXPORT void JNICALL SDL_JAVA_INTERFACE(nativeSetenv)(
 *******************************************************************************/
 
 static SDL_atomic_t s_active;
-struct LocalReferenceHolder
-{
+struct LocalReferenceHolder {
     JNIEnv *m_env;
     const char *m_func;
 };
+
+
+// 设置亮度
+void SDL_AndroidSetBrightness(int brightness) {
+    JNIEnv *env = Android_JNI_GetEnv();
+    (*env)->CallStaticVoidMethod(env, mActivityClass, midSetBrightness, brightness);
+}
+
+// 获取亮度
+int SDL_AndroidGetBrightness(void) {
+    JNIEnv *env = Android_JNI_GetEnv();
+    return (*env)->CallStaticIntMethod(env, mActivityClass, midGetBrightness);
+}
+
+
+// 设置音量
+void SDL_AndroidSetVolume(int volume) {
+    JNIEnv *env = Android_JNI_GetEnv();
+    (*env)->CallStaticVoidMethod(env, mActivityClass, midSetVolume, volume);
+}
+
+// 获取音量
+int SDL_AndroidGetVolume(void) {
+    JNIEnv *env = Android_JNI_GetEnv();
+    return (*env)->CallStaticIntMethod(env, mActivityClass, midGetVolume);
+}
+
 
 static struct LocalReferenceHolder LocalReferenceHolder_Setup(const char *func)
 {

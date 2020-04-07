@@ -2,25 +2,35 @@ package com.termux.sdl;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import org.libsdl.app.SDLActivity;
 
 
-// ffplay argv
+// using ffplay to playing video and audio files
 
 public class TermuxFFplayActivity extends SDLActivity {
 
+    private final static String TAG = "TermuxFFplayActivity";
+
+    protected static boolean mFullscreenModeActive = true;
+    // the ffplay command params
     private String argv = "ffplay";
     
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        
         super.onCreate(savedInstanceState);
-        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+        if((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
             finish();
             return;
         }
+        
         argv = getIntent().getStringExtra("argv");
+        Log.i(TAG, "argv = " + argv);
     }
 
+    
     @Override
     protected String getMainSharedObject() {
         if(argv != null && !argv.isEmpty())
@@ -42,10 +52,10 @@ public class TermuxFFplayActivity extends SDLActivity {
         super.onStop();
     }
 
-    
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        finish();
     }
+    
 }

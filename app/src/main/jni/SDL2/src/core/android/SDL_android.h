@@ -137,6 +137,16 @@ void Android_ActivityMutex_Lock(void);
 void Android_ActivityMutex_Unlock(void);
 void Android_ActivityMutex_Lock_Running(void);
 
+// 设置亮度
+void SDL_AndroidSetBrightness(int);
+// 获取亮度
+int SDL_AndroidGetBrightness(void);
+
+// 设置音量
+void SDL_AndroidSetVolume(int);
+// 获取音量
+int SDL_AndroidGetVolume(void);
+
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus
 /* *INDENT-OFF* */

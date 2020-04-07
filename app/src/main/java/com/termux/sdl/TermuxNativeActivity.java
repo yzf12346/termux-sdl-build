@@ -19,15 +19,15 @@ public class TermuxNativeActivity extends Activity {
 
     // error message
     private String errorMessage = null;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+        if((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
             finish();
             return;
         }
-        
+
         // nativeApp = your_project/libxxx.so
         nativeApp = getIntent().getStringExtra("nativeApp");
 
@@ -45,29 +45,29 @@ public class TermuxNativeActivity extends Activity {
             TextView textView = findViewById(R.id.nativeTextView);
             if(errorMessage == null)
                 errorMessage = "Failed to load the nativeApp library, the parameters may be wrong.\n\n"
-                    + "Make sure the command is correct.\n\n"
-                    + "am start $(shell am 2>&1| grep -q '\\-\\-user' && echo '--user 0') -n com.termux.sdl/.TermuxNativeActivity -e nativeApp your_lib_pathname";
-            textView.setText(errorMessage);  
+                               + "Make sure the command is correct.\n\n"
+                               + "am start $(shell am 2>&1| grep -q '\\-\\-user' && echo '--user 0') -n com.termux.sdl/.TermuxNativeActivity -e nativeApp your_lib_pathname";
+            textView.setText(errorMessage);
         }
     }
 
 
     public boolean loadLibFile() {
         // lib must be exist
-        if (nativeApp == null || nativeApp.isEmpty()) return false;
+        if(nativeApp == null || nativeApp.isEmpty()) return false;
         nativeApp = nativeApp.trim();
-        if ((new File(nativeApp)).exists()) {
+        if((new File(nativeApp)).exists()) {
             String libDir = getCacheDir().getParentFile().getAbsolutePath() + "/tmpdir";
             String libFile = libDir + "/" + (new File(nativeApp)).getName();
-            
-            if (!(new File(libDir)).exists()) {
+
+            if(!(new File(libDir)).exists()) {
                 (new File(libDir)).mkdir();
             }
 
             try {
                 Util.copyFile(new File(nativeApp), new File(libFile));
                 Runtime.getRuntime().exec("chmod 755 " + libFile).waitFor();
-                
+
                 // Environment variables must be set, otherwise the program will not run correctly
                 String pwd = new File(nativeApp).getParentFile().getAbsolutePath();
                 Log.i(TAG, "chdir: " + pwd);
@@ -81,10 +81,10 @@ public class TermuxNativeActivity extends Activity {
                 conf.write(nativeApp.getBytes());
                 conf.close();
 
-            } catch (IOException ex) {
+            } catch(IOException ex) {
                 Log.e(TAG, "copy file failed: " + ex.getMessage());
                 return false;
-            } catch (InterruptedException ex) {
+            } catch(InterruptedException ex) {
                 Log.e(TAG, "exec cmd failed: " + ex.getMessage());
                 return false;
             }
@@ -95,14 +95,14 @@ public class TermuxNativeActivity extends Activity {
 
     public void deleteLibFile() {
         // delete /data/user/0/com.termux.sdl/tmpdir/libxxx.so
-        if (nativeApp != null && !nativeApp.isEmpty()) {
+        if(nativeApp != null && !nativeApp.isEmpty()) {
             File file = new File(nativeApp);
-            if (file.exists()) {
+            if(file.exists()) {
                 Util.deleteFile(file);
             }
         }
     }
-    
+
 
     @Override
     protected void onStop() {
@@ -115,6 +115,5 @@ public class TermuxNativeActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         deleteLibFile();
-        finish();
     }
 }

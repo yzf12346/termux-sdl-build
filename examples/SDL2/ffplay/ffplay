@@ -4,7 +4,7 @@
 # put ffplay script to /data/data/com.termux/files/usr/bin
 # how to use:
 # ffplay -i /sdcard/video/test.mp4
-# 2 playback speed: ffplay -af atempo=2.0 -vf setpts=1/2*PTS -i /sdcard/video/test.mp4
+# 2x playback speed: ffplay -af atempo=2.0 -vf setpts=1/2*PTS -i /sdcard/video/test.mp4
 # add subtitles: ffplay -vf subtitles=test.srt -i /sdcard/video/test.mp4
 
 function print_usage() {

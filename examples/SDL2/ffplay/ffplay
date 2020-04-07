@@ -1,9 +1,11 @@
 #!/bin/bash
 
-# for termux to exec ffplay command
+# this is a ffplay wrapper,for termux to exec ffplay command
 # put ffplay script to /data/data/com.termux/files/usr/bin
-# for example 2 speed playback: ffplay -af "atempo=2.0" -vf "setpts=0.5*PTS" -i /sdcard/video/test.mp4
-
+# how to use:
+# ffplay -i /sdcard/video/test.mp4
+# 2 playback speed: ffplay -af atempo=2.0 -vf setpts=1/2*PTS -i /sdcard/video/test.mp4
+# add subtitles: ffplay -vf subtitles=test.srt -i /sdcard/video/test.mp4
 
 function print_usage() {
 	echo "Simple media player"

@@ -1,6 +1,6 @@
 # termux-sdl
 
-这是一个termux sdl插件，为编译和运行SDL2和native app程序！
+这是一个termux sdl插件，为编译运行SDL2和native app程序！
 
 同时我把ffplay也添加了进来，因此它也可以作为一个本地播放器，ffplay目前实现了进度条，时间的显示，滑动屏幕左边控制亮度，右边控制音量，进度条的实现是通过SDL2_gfx进行绘制的，时间的显示是通过SDL2_ttf来绘制的
 
@@ -54,7 +54,7 @@ cp example/SDL2/ffplay/ffplay /data/data/com.termux/files/usr/bin
 ffplay -i /sdcard/video/test.mp4
 
 # 2x speed playback
-ffplay -af atempo = 2.0 -vf setpts = 1/2 * PTS -i /sdcard/video/test.mp4
+ffplay -af atempo=2.0 -vf setpts=1/2*PTS -i /sdcard/video/test.mp4
 
 # play at any speed: atempo=x setpts=1/x*PTS
 ```

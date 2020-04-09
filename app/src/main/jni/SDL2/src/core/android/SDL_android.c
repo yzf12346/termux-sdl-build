@@ -31,8 +31,10 @@
 
 #include "SDL_system.h"
 #include "SDL_android.h"
-
 #include "keyinfotable.h"
+
+// 打印日志到Java程序
+#include "SDL_android_log.h"
 
 #include "../../events/SDL_events_c.h"
 #include "../../video/android/SDL_androidkeyboard.h"
@@ -329,6 +331,8 @@ static jmethodID midSetVolume;
 // 获取音量
 static jmethodID midGetVolume;
 
+// 打印日志
+static jmethodID midLogPrint;
 
 /* audio manager */
 static jclass mAudioManagerClass;
@@ -613,6 +617,10 @@ JNIEXPORT void JNICALL SDL_JAVA_INTERFACE(nativeSetupJNI)(JNIEnv *env, jclass cl
     // 获取音量
     midGetVolume = (*env)->GetStaticMethodID(env, mActivityClass, "getVolume", "()I");
     
+    // 打印日志
+    midLogPrint = (*env)->GetStaticMethodID(env, mActivityClass, "nativeLogPrint", "(Ljava/lang/String;I)V");
+    
+    
     if (!midClipboardGetText ||
         !midClipboardHasText ||
         !midClipboardSetText ||
@@ -643,8 +651,9 @@ JNIEXPORT void JNICALL SDL_JAVA_INTERFACE(nativeSetupJNI)(JNIEnv *env, jclass cl
         !midShowTextInput ||
         !midSetBrightness || // 设置亮度
         !midGetBrightness || // 获取亮度
-        !midSetVolume || // 设置音量
-        !midGetVolume || // 获取音量
+        !midSetVolume ||     // 设置音量
+        !midGetVolume ||     // 获取音量
+        !midLogPrint ||      // 打印日志
         !midSupportsRelativeMouse) {
         __android_log_print(ANDROID_LOG_WARN, "SDL", "Missing some Java callbacks, do you have the latest version of SDLActivity.java?");
     }
@@ -1361,6 +1370,29 @@ int SDL_AndroidGetVolume(void) {
     return (*env)->CallStaticIntMethod(env, mActivityClass, midGetVolume);
 }
 
+
+// 打印日志到Java程序
+void SDL_AndroidLogPrint(int log_level, const char *tag, const char *fmt, ...) {
+    // 日志信息
+    char info[1024];
+    
+    // 可变参数列表
+    va_list ap;
+    va_start(ap, fmt);
+    vsnprintf(info, sizeof(info), fmt, ap);
+    va_end(ap);
+    
+    // 打印日志
+    if(log_level == LOG_INFO)
+        __android_log_print(ANDROID_LOG_INFO, tag, "%s\n", info);
+    else 
+        __android_log_print(ANDROID_LOG_ERROR, tag, "%s\n", info);
+    
+    // 返回日志到Java程序
+    JNIEnv *env = Android_JNI_GetEnv();
+    jstring jinfo = (*env)->NewStringUTF(env, info);
+    (*env)->CallStaticVoidMethod(env, mActivityClass, midLogPrint, jinfo, log_level);
+}
 
 static struct LocalReferenceHolder LocalReferenceHolder_Setup(const char *func)
 {

@@ -60,7 +60,11 @@
 #include "SDL_version.h"
 #include "SDL_video.h"
 
+// 打印日志到Java程序
+#include "SDL_android_log.h"
+
 #include "begin_code.h"
+
 /* Set up for C function definitions, even when using C++ */
 #ifdef __cplusplus
 extern "C" {
@@ -124,6 +128,8 @@ extern DECLSPEC Uint32 SDLCALL SDL_WasInit(Uint32 flags);
  *  call it upon all exit conditions.
  */
 extern DECLSPEC void SDLCALL SDL_Quit(void);
+
+
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus

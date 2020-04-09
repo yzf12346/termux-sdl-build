@@ -16,4 +16,6 @@ public final class JNI {
 
     public static native String getSDLVersion(int lib);
 
+    public static native String getFFmpegVersion();
+
 }

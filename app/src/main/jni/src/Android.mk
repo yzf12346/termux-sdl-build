@@ -24,7 +24,8 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/../SDL2/include \
                     $(LOCAL_PATH)/../SDL2_mixer \
                     $(LOCAL_PATH)/../SDL2_net \
                     $(LOCAL_PATH)/../SDL2_ttf \
-                    $(LOCAL_PATH)/../SDL2_gfx
+                    $(LOCAL_PATH)/../SDL2_gfx \
+                    $(LOCAL_PATH)/../ffplay/include/libavutil
                    
 
 

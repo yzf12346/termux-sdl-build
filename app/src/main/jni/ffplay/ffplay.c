@@ -4173,8 +4173,8 @@ int main(int argc, char **argv) {
     }
 
     // 初始化显示时间字体文件
-    init_font(font_path, 45);
-    //gfxPrimitivesSetFont(NULL, 100, 100);
+    init_font(font_path, font_size);
+    SDL_AndroidLogPrint(LOG_INFO, program_name, "hello ffplay %d\n", font_size);
 
     is = stream_open(input_filename, file_iformat);
     if(!is) {

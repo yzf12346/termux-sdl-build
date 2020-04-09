@@ -6,6 +6,7 @@
     <string name="action_settings">setting</string>
     <string name="action_ffplay">ffplay</string>
     <string name="action_about">about</string>
+    <string name="action_logcat">logcat</string>
     
     <string name="about_dialog">About</string>
     <string name="sdl_version">SDL2 version</string>
@@ -14,4 +15,6 @@
     <string name="sdl_net_version">SDL2_net version</string>
 	<string name="sdl_ttf_version">SDL2_ttf version</string>
     <string name="sdl_gfx_version">SDL2_gfx version</string>
+    
+    <string name="ffmpeg_version">FFmpeg version</string>
 </resources>

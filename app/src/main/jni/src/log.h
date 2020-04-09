@@ -5,7 +5,7 @@
 #include <android/log.h>
 
 // default enable debug
-#define DEBUG true
+#define DEBUG 1
 
 // default TAG
 #define LOG_TAG "JNI.log"

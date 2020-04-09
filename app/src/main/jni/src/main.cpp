@@ -27,6 +27,7 @@
 #include "SDL_ttf.h"
 #include "SDL2_gfxPrimitives.h"
 
+#include "ffversion.h"
 #include "log.h"
 
 #define TAG "Termux_sdl"
@@ -79,6 +80,13 @@ JNIEXPORT jint JNICALL Java_com_termux_sdl_JNI_chDir(JNIEnv *env, jobject thiz,
                                                                   jstring path){
     const char *_path = env->GetStringUTFChars(path, NULL);
     return chdir(_path);
+}
+
+
+// fun getFFmpegVersion()
+JNIEXPORT jstring JNICALL Java_com_termux_sdl_JNI_getFFmpegVersion(JNIEnv *env, 
+                                                    jclass thiz) {
+    return env->NewStringUTF(FFMPEG_VERSION);
 }
 
 

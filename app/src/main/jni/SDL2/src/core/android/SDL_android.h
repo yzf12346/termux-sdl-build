@@ -147,6 +147,14 @@ void SDL_AndroidSetVolume(int);
 // 获取音量
 int SDL_AndroidGetVolume(void);
 
+// 打印log到java层
+void SDL_AndroidLogPrint(int, const char*, const char*, ...)
+#if defined(__GNUC__)
+    __attribute__((__format__(printf, 3, 4)))
+#endif
+; // SDL_AndroidLogPrint
+
+
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus
 /* *INDENT-OFF* */

@@ -55,6 +55,7 @@ public class TermuxSDLActivity extends SDLActivity {
             }
         }
 
+
         // sdlmain = your_project/libxxx.so
         sdlmain = getIntent().getStringExtra("sdlmain");
         Log.i(TAG, "sdlmain: " + sdlmain);
@@ -64,7 +65,7 @@ public class TermuxSDLActivity extends SDLActivity {
 
     }
 
-
+    // 获取intent传入过来的参数
     @Override
     protected String[] getArguments() {
         String args = getIntent().getStringExtra("args");
@@ -77,7 +78,7 @@ public class TermuxSDLActivity extends SDLActivity {
         }
     }
 
-
+    // SDL2执行的main库
     @Override
     protected String getMainSharedObject() {
         if(sdlmain != null && !sdlmain.isEmpty()) {
@@ -88,7 +89,7 @@ public class TermuxSDLActivity extends SDLActivity {
         }
     }
 
-
+    // 加载库文件到内部目录
     public void loadLibFile() {
         if(sdlmain == null || sdlmain.isEmpty()) return ;
         sdlmain = sdlmain.trim();
@@ -122,27 +123,6 @@ public class TermuxSDLActivity extends SDLActivity {
         }
     }
 
-
-    // restart activity
-//    private void restartActivity() {
-//        new Handler().post(new Runnable() {
-//            @Override
-//            public void run() {
-//                SDLActivity.nativeSendQuit();
-//
-//                Intent intent = getIntent();
-//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK
-//                                                            | Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//                overridePendingTransition(0, 0);
-//                finish();
-//
-//                overridePendingTransition(0, 0);
-//                startActivity(intent);
-//            }
-//        });
-//    }
-//
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -156,18 +136,20 @@ public class TermuxSDLActivity extends SDLActivity {
         deleteLibFile();
     }
 
+    // 删除传入内部目录的库文件
     public void deleteLibFile() {
         // delete /data/user/0/com.termux.sdl/tmpdir/libxxx.so
         if(sdlmain != null && !sdlmain.isEmpty()) {
             File file = new File(sdlmain);
             Log.i(TAG, "delete sdlmain: " + file.getAbsolutePath());
             if(file.exists()) {
-                //Util.deleteFile(file);
+                Util.deleteFile(file);
             }
         }
     }
 
 
+    // 判断权限
     public boolean hasPermission(String permission) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             return checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
@@ -200,10 +182,13 @@ public class TermuxSDLActivity extends SDLActivity {
             startActivity(new Intent(this, TermuxNativeActivity.class));
             break;
         case R.id.action_ffplay:
-            ffplayDialog();
+            showFFplayDialog();
             break;
         case R.id.action_about:
-            aboutDialog();
+            showAboutDialog();
+            break;
+        case R.id.action_logcat:
+            showLogcatDialog();
             break;
         }
         return super.onOptionsItemSelected(item);
@@ -211,6 +196,16 @@ public class TermuxSDLActivity extends SDLActivity {
 
 
     private TextWatcher watcher = new TextWatcher() {
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            // TODO: Implement this method
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            // TODO: Implement this method
+        }
 
         @Override
         public void afterTextChanged(Editable s) {
@@ -222,24 +217,15 @@ public class TermuxSDLActivity extends SDLActivity {
             else
                 positiveButton.setEnabled(true);
         }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            // TODO: Implement this method
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            // TODO: Implement this method
-        }
     };
 
 
-    private void ffplayDialog() {
-        View view = getLayoutInflater().inflate(R.layout.cmd_dialog, null);
+    // 显示执行ffplay命令dialog
+    public void showFFplayDialog() {
+        View view = getLayoutInflater().inflate(R.layout.ffplay_cmd_dialog, null);
         final EditText cmdText = view.findViewById(R.id.cmd_text);
         final String cmd = mPrefer.getString("cmd", "").trim();
-        cmdText.addTextChangedListener(watcher);
+
         if(!cmd.isEmpty()) {
             cmdText.setText(cmd);
         } else {
@@ -247,6 +233,11 @@ public class TermuxSDLActivity extends SDLActivity {
         }
 
         cmdText.requestFocus();
+
+        // 添加文本监听
+        cmdText.addTextChangedListener(watcher);
+
+        // 创建对话框
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
         .setTitle("ffplay")
         .setView(view)
@@ -292,7 +283,8 @@ public class TermuxSDLActivity extends SDLActivity {
 
 
 
-    private void aboutDialog() {
+    // 显示版本信息
+    public void showAboutDialog() {
 
         String versionName = null;
         try {
@@ -319,6 +311,8 @@ public class TermuxSDLActivity extends SDLActivity {
                          + "https://www.libsdl.org/projects/SDL_ttf\n\n"
                          + getString(R.string.sdl_gfx_version) + ": " + JNI.getSDLVersion(SDLVersion.SDL2_gfx.ordinal()) + "\n"
                          + "http://www.ferzkopp.net/wordpress/2016/01/02/sdl_gfx-sdl2_gfx\n\n"
+                         + getString(R.string.ffmpeg_version) + ": " + JNI.getFFmpegVersion() + "\n"
+                         + "http://ffmpeg.org\n"
                         );
 
         //textView.setMovementMethod(LinkMovementMethod.getInstance());

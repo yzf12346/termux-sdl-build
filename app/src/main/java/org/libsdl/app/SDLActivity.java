@@ -8,6 +8,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -28,8 +29,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.Layout;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
@@ -53,11 +58,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
+import java.util.ArrayList;
 
 /**
     SDL Activity
@@ -115,24 +123,49 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     protected static HIDDeviceManager mHIDDeviceManager;
 
     protected static AudioManager mAudioManager;
+
+    private static final int ANDROID_LOG_INFO = 0;
+    private static final int ANDROID_LOG_ERROR = 1;
+    private static final int SET_BRIGHTNESS = 2;
+    private static TextView text = null;
+    private static ScrollView scrollView = null;
+    private static SharedPreferences sharedPrefer;
+    private static String err = null;
+    private static final int MAX_LINE = 200;
+    private static ArrayList<String> textList = new ArrayList<>();
     
     
-    protected static Handler mHandler = new Handler(){
+    protected static Handler mHandler = new Handler() {
 
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            // 设置亮度
-            int brightness = (int)msg.obj;
-            setRealBrightness(brightness);
+
+            switch(msg.what) {
+
+            case ANDROID_LOG_INFO:
+                textList.add((String)msg.obj);
+                text.append((String)msg.obj);
+                
+                break;
+            case ANDROID_LOG_ERROR:
+                err = (String)msg.obj;
+                textList.add(err);
+                text.append(err);
+                break;
+            case SET_BRIGHTNESS:
+                // 设置亮度
+                int brightness = (int)msg.obj;
+                setRealBrightness(brightness);
+                break;
+            }
         }
-        
     };
-    
-    
+
+
     // 设置亮量[0..100] 方法在src/core/android/SDL_android.c里调用
     // 设置当前activity显示的亮度
-    public static void setRealBrightness(int brightness){
+    public static void setRealBrightness(int brightness) {
 
         WindowManager.LayoutParams lp = mSingleton.getWindow().getAttributes();
 
@@ -142,17 +175,16 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         lp.screenBrightness = Float.valueOf(brightness * maxBrightness / 100) * (1f / maxBrightness);
         mSingleton.getWindow().setAttributes(lp);
     }
-    
-   
-    // 不能在子线程中更新UI
-    public static void setBrightness(int brightness){
 
-        Message msg = mHandler.obtainMessage();
+
+    // 不能在子线程中更新UI
+    public static void setBrightness(int brightness) {
+        Message msg = mHandler.obtainMessage(SET_BRIGHTNESS);
         msg.obj = brightness;
         mHandler.sendMessage(msg);
     }
-    
-    
+
+
     // 设置亮度，退出app也能保持该亮度值
     public static void saveBrightness(int brightness) {
         ContentResolver resolver = mSingleton.getContentResolver();
@@ -160,8 +192,8 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         android.provider.Settings.System.putInt(resolver, Settings.System.SCREEN_BRIGHTNESS, brightness);
         resolver.notifyChange(uri, null);
     }
-    
-    
+
+
     // 获取亮度[0..100] 方法在src/core/android/SDL_android.c里调用
     public static int getBrightness() {
         int brightness = 0;
@@ -170,37 +202,35 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         try {
             brightness = android.provider.Settings.System.getInt(resolver, Settings.System.SCREEN_BRIGHTNESS);
             Log.i(TAG, "curr brightness: " + brightness);
-        } catch (Exception e) {
+        } catch(Exception e) {
             e.printStackTrace();
         }
         // 亮度转换为[0..100]
         return brightness / maxBrightness * 100;
     }
-    
+
     // 如果是自定义ROM最大亮度可能就不是255
-    // 小米手机(MI6 MIUI11)最大亮度4095
-    // 为了实现更为细腻的调光，手机厂商都有可能修改这个值
     public static int getMaxBrightness() {
         int maxBrightness = 255;
         try {
             Resources res = Resources.getSystem();
             int id = res.getIdentifier("config_screenBrightnessSettingMaximum", "integer", "android");
-            if (id != 0) {
+            if(id != 0) {
                 maxBrightness = res.getInteger(id);
                 Log.i(TAG, "max brightness: " + maxBrightness);
             }
-        }catch (Exception e){
+        } catch(Exception e) {
             Log.e(TAG, e.getMessage());
         }
-        
+
         return maxBrightness;
     }
-    
+
 
     // 开启/关闭自动亮度
     public static boolean autoBrightness(boolean enable) {
         int result = 0;
-        if (enable) {
+        if(enable) {
             result = Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC; //开启
         } else {
             result = Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL;//关闭
@@ -209,22 +239,22 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
                                       Settings.System.SCREEN_BRIGHTNESS_MODE,
                                       result);
     }
-    
-    
+
+
     // 判断是否开启自动调节亮度
     public static boolean isAutoBrightness() {
         ContentResolver resolver = mSingleton.getContentResolver();
         boolean isAutomicBrightness = false;
         try {
             isAutomicBrightness = Settings.System.getInt(resolver,
-                                Settings.System.SCREEN_BRIGHTNESS_MODE) == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC;
-        } catch (Settings.SettingNotFoundException e) {
+                                  Settings.System.SCREEN_BRIGHTNESS_MODE) == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC;
+        } catch(Settings.SettingNotFoundException e) {
             Log.e(TAG, e.getMessage());
         }
         return isAutomicBrightness;
     }
-    
-    
+
+
     // 设置音量[0..100] 方法在src/core/android/SDL_android.c里调用
     public static void setVolume(int volume) {
         if(mAudioManager != null) {
@@ -234,9 +264,9 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
             mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume * maxVolume / 100, AudioManager.FLAG_PLAY_SOUND);
         }
     }
-    
+
     // 获取音量[0..100] 方法在src/core/android/SDL_android.c里调用
-    public static int getVolume(){
+    public static int getVolume() {
         if(mAudioManager != null) {
             int currVolume =  mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
             int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
@@ -245,8 +275,98 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         }
         return 0;
     }
+
+    // 这个方法用于获取JNI和SDL2的log
+    public static void nativeLogPrint(String info, int logLevel) {
+
+        Message msg = null;
+
+        if(logLevel == ANDROID_LOG_INFO)
+            msg = mHandler.obtainMessage(ANDROID_LOG_INFO);
+        else if(logLevel == ANDROID_LOG_ERROR)
+            msg = mHandler.obtainMessage(ANDROID_LOG_ERROR);
+
+        msg.obj = info;
+        mHandler.sendMessage(msg);
+        try {
+            Thread.sleep(5);
+        } catch(InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+   static int count = 0;
+    private static TextWatcher watcher = new TextWatcher() {
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            // TODO: Implement this method
+           
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            // TODO: Implement this method
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            // TODO: Implement this method
+
+            if(textList.size() % (MAX_LINE * 25 + 1) == 0) {
+                s.clear();
+                textList.clear();
+            }
+            
+            int scrollX = scrollView.getScrollX();
+
+            int scrollY = text.getPaddingTop() 
+                + text.getHeight()
+                + text.getPaddingBottom();
+            scrollView.scrollTo(scrollX, scrollY);
+        }
+    };
     
-    
+    // 显示SDL2传递过来的log
+    public static void showLogcatDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(mSingleton);
+        builder.setView(scrollView);
+       
+        String error = sharedPrefer.getString("error", "");
+        if(!error.equals("") && text.getText().toString().equals("")) {
+            text.setTextColor(Color.RED);
+            text.setText(error);
+            sharedPrefer.edit().putString("error", "").commit();
+        }
+
+        // 这里要移除child view，因为text是全局变量，不然会报错
+        // java.lang.IllegalStateException: The specified child already has a parent.
+        // You must call removeView() on the child's parent first.
+        ViewGroup viewGroup = (ViewGroup) scrollView.getParent();
+        if(viewGroup != null) viewGroup.removeAllViewsInLayout();
+
+        builder.setTitle("Logcat");
+        builder.setNegativeButton("clear", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                text.setText("");
+                sharedPrefer.edit().putString("error", "").commit();
+            }
+        });
+        builder.setPositiveButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setCancelable(true).show();
+        
+    }
+
+
     // This is what SDL runs in. It invokes SDL_main(), eventually
     protected static Thread mSDLThread;
 
@@ -344,15 +464,16 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     }
 
 
+    protected static void showErrorDialog(String err) {
 
-    protected void showErrorDialog(String err) {
-        AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
-        dlgAlert.setMessage("An error occurred while trying to start the application. Please try again and/or reinstall."
-                            + System.getProperty("line.separator")
-                            + System.getProperty("line.separator")
-                            + "Error: " + err);
-        dlgAlert.setTitle("SDL Error");
-        dlgAlert.setPositiveButton("Exit",
+        AlertDialog.Builder builder  = new AlertDialog.Builder(mSingleton);
+
+        builder.setMessage("An error occurred while trying to start the application. Please try again and/or reinstall."
+                           + System.getProperty("line.separator")
+                           + System.getProperty("line.separator")
+                           + "Error: " + err);
+        builder.setTitle("SDL Error");
+        builder.setPositiveButton("Exit",
         new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
@@ -360,8 +481,32 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
                 SDLActivity.mSingleton.finish();
             }
         });
-        dlgAlert.setCancelable(false);
-        dlgAlert.create().show();
+
+
+        AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+
+        //获取mAlert对象
+
+        try {
+            Field mAlert = AlertDialog.class.getDeclaredField("mAlert");
+            mAlert.setAccessible(true);
+            Object mAlertController = mAlert.get(dialog);
+            //获取mMessageView并设置大小颜色
+            Field mMessage = mAlertController.getClass().getDeclaredField("mMessageView");
+            mMessage.setAccessible(true);
+            TextView mMessageView = (TextView) mMessage.get(mAlertController);
+            mMessageView.setTextColor(Color.RED);
+
+        } catch(NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch(IllegalAccessException e) {
+            e.printStackTrace();
+        } catch(IllegalArgumentException e) {
+            e.printStackTrace();
+        }
     }
 
     // Setup
@@ -370,9 +515,9 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         Log.v(TAG, "Device: " + Build.DEVICE);
         Log.v(TAG, "Model: " + Build.MODEL);
         Log.v(TAG, "onCreate()");
-        
+
         super.onCreate(savedInstanceState);
-        
+
         try {
             Thread.currentThread().setName("SDLActivity");
         } catch(Exception e) {
@@ -409,8 +554,28 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         mSingleton = this;
         SDL.setContext(this);
 
+        // 初始化显示log的TextView
+        text = new TextView(this);
+        text.setTextIsSelectable(true);
+        text.setMaxLines(MAX_LINE);
+        text.setTextSize(16);
+        text.setPadding(70, 10, 0, 0);
+        text.setTextColor(0xff15ab15);
+        text.addTextChangedListener(watcher);
+        //text.setMovementMethod(ScrollingMovementMethod.getInstance());
+        text.setHint("Logcat为SDL2传入Java程序的日志\n"
+                     
+                     + "要想显示日志，需要在你自己的SDL2程序里调用SDL_AndroidLogPrint方法\n\n"
+                     
+                     + "Logcat is the log of the java program passed into the SDL2 program.\n"
+                     + "To display the log, you need to call the SDL_AndroidLogPrint method in your own SDL2 program.\n");
+
+        scrollView = new ScrollView(this);
+        scrollView.addView(text);
+        sharedPrefer = PreferenceManager.getDefaultSharedPreferences(this);
+
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        
+
         mClipboardHandler = new SDLClipboardHandler_API11();
 
         mHIDDeviceManager = HIDDeviceManager.acquire(this);
@@ -579,7 +744,10 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     @Override
     protected void onDestroy() {
         Log.v(TAG, "onDestroy()");
-
+        textList.clear();
+        text.setText("");
+        if(err != null && !err.equals(""))
+            sharedPrefer.edit().putString("error", err).commit();
         if(mHIDDeviceManager != null) {
             HIDDeviceManager.release(mHIDDeviceManager);
             mHIDDeviceManager = null;

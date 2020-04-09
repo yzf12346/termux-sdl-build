@@ -355,6 +355,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 text.setText("");
+                textList.clear();
                 mPreferences.edit().putString("error", "").commit();
             }
         });

@@ -28,8 +28,7 @@ public class TermuxSDLActivity extends SDLActivity {
 
     private static final String TAG = "TermuxSDLActivity";
 
-    private SharedPreferences mPrefer;
-    private Button positiveButton;
+    private Button positiveButton = null;
 
     // the self lib pathname
     private String sdlmain = "libmain.so";
@@ -43,25 +42,18 @@ public class TermuxSDLActivity extends SDLActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mPrefer = PreferenceManager.getDefaultSharedPreferences(this);
+        String permission =  Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-        String[] permission = new String[] {
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        };
-
-        for(String perm : permission) {
-            if(!hasPermission(perm)) {
-                applyPermission(perm);
-            }
+        if(!hasPermission(permission)) {
+            applyPermission(permission);
         }
-
-
+        
         // sdlmain = your_project/libxxx.so
         sdlmain = getIntent().getStringExtra("sdlmain");
         Log.i(TAG, "sdlmain: " + sdlmain);
         // loading SDL lib to internal directory
         // to /data/user/0/com.termux.sdl/tmpdir/libxxx.so
-        loadLibFile();
+        copyLibFile();
 
     }
 
@@ -71,7 +63,6 @@ public class TermuxSDLActivity extends SDLActivity {
         String args = getIntent().getStringExtra("args");
         if(args != null && !args.isEmpty()) {
             //Log.i(TAG, args);
-
             return args.trim().split(" ");
         } else {
             return super.getArguments();
@@ -90,7 +81,7 @@ public class TermuxSDLActivity extends SDLActivity {
     }
 
     // 加载库文件到内部目录
-    public void loadLibFile() {
+    public void copyLibFile() {
         if(sdlmain == null || sdlmain.isEmpty()) return ;
         sdlmain = sdlmain.trim();
         if((new File(sdlmain)).exists()) {
@@ -102,7 +93,7 @@ public class TermuxSDLActivity extends SDLActivity {
             }
 
             try {
-                Util.copyFile(new File(sdlmain), new File(libFile));
+                FileUtils.copyFile(new File(sdlmain), new File(libFile));
                 Runtime.getRuntime().exec("chmod 755 " + libFile).waitFor();
 
                 // Environment variables must be set, otherwise the program will not run correctly
@@ -143,7 +134,7 @@ public class TermuxSDLActivity extends SDLActivity {
             File file = new File(sdlmain);
             Log.i(TAG, "delete sdlmain: " + file.getAbsolutePath());
             if(file.exists()) {
-                Util.deleteFile(file);
+                FileUtils.deleteFile(file);
             }
         }
     }
@@ -224,7 +215,7 @@ public class TermuxSDLActivity extends SDLActivity {
     public void showFFplayDialog() {
         View view = getLayoutInflater().inflate(R.layout.ffplay_cmd_dialog, null);
         final EditText cmdText = view.findViewById(R.id.cmd_text);
-        final String cmd = mPrefer.getString("cmd", "").trim();
+        final String cmd = mPreferences.getString("cmd", "").trim();
 
         if(!cmd.isEmpty()) {
             cmdText.setText(cmd);
@@ -248,7 +239,7 @@ public class TermuxSDLActivity extends SDLActivity {
                 SDLActivity.nativeSendQuit();
                 //SDLActivity.nativeQuit();
                 String text = cmdText.getText().toString().trim();
-                mPrefer.edit().putString("cmd", text).commit();
+                mPreferences.edit().putString("cmd", text).commit();
 
                 if(text.startsWith("ffplay")) {
                     text = text.substring(6, text.length()).trim();
@@ -280,7 +271,6 @@ public class TermuxSDLActivity extends SDLActivity {
             positiveButton.setEnabled(true);
 
     }
-
 
 
     // 显示版本信息

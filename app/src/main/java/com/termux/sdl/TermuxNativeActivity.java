@@ -33,7 +33,7 @@ public class TermuxNativeActivity extends Activity {
 
         // loading native lib to internal directory
         // to /data/user/0/com.termux.sdl/tmpdir
-        if(loadLibFile()) {
+        if(copyLibFile()) {
             Intent intent = new Intent(this, NativeActivity.class);
             //from jni: loader.cpp
             intent.putExtra("nativeApp", nativeApp);
@@ -52,7 +52,7 @@ public class TermuxNativeActivity extends Activity {
     }
 
 
-    public boolean loadLibFile() {
+    public boolean copyLibFile() {
         // lib must be exist
         if(nativeApp == null || nativeApp.isEmpty()) return false;
         nativeApp = nativeApp.trim();
@@ -65,7 +65,7 @@ public class TermuxNativeActivity extends Activity {
             }
 
             try {
-                Util.copyFile(new File(nativeApp), new File(libFile));
+                FileUtils.copyFile(new File(nativeApp), new File(libFile));
                 Runtime.getRuntime().exec("chmod 755 " + libFile).waitFor();
 
                 // Environment variables must be set, otherwise the program will not run correctly
@@ -98,7 +98,7 @@ public class TermuxNativeActivity extends Activity {
         if(nativeApp != null && !nativeApp.isEmpty()) {
             File file = new File(nativeApp);
             if(file.exists()) {
-                Util.deleteFile(file);
+                FileUtils.deleteFile(file);
             }
         }
     }

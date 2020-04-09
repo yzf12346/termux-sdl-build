@@ -13,6 +13,7 @@ public class TermuxFFplayActivity extends SDLActivity {
     private final static String TAG = "TermuxFFplayActivity";
 
     protected static boolean mFullscreenModeActive = true;
+    
     // the ffplay command params
     private String argv = "ffplay";
 
@@ -57,5 +58,4 @@ public class TermuxFFplayActivity extends SDLActivity {
     protected void onDestroy() {
         super.onDestroy();
     }
-
 }

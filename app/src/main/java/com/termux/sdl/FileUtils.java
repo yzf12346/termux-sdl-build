@@ -11,7 +11,7 @@ import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public final class Util {
+public final class FileUtils {
 
     private static final String TAG = "Termux SDL JNI";
 

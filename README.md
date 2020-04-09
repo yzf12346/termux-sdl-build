@@ -6,7 +6,7 @@
 
 ffplay目前存在的bug，当以倍速进行播放时，拖动进度条，时间不准确，视频与音频不同步
 
-### 如何播放：
+###### ffplay播放：
 ```bash
 # example/SDL2/ffplay/ffplay 是一个shell命令，并不是真正的二进制文件
 cp example/SDL2/ffplay/ffplay /data/data/com.termux/files/usr/bin
@@ -45,7 +45,7 @@ This is a termux sdl plugin for compiling and running SDL2 and native app progra
 
  The current bug of ffplay, when playing at playback speed, drag the progress bar, the time is inaccurate, and the video and audio are not synchronized
 
-### How to playing:
+###### ffplay playing:
 ```bash
 # example/SDL2/ffplay/ffplay is a shell command, not a real binary file
 cp example/SDL2/ffplay/ffplay /data/data/com.termux/files/usr/bin
@@ -75,6 +75,9 @@ Extract the examples.zip file to /sdacrd root directory (because showimage and p
 cd /sdcard/examples/SDL2/draw2
 make run
 ```
+
+##### app [download](https://github.com/Lzhiyong/termux-sdl/releases/download/termux-sdl/app-debug_sign.apk)
+
 
  **** 
 

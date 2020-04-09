@@ -123,13 +123,12 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     protected static HIDDeviceManager mHIDDeviceManager;
 
     protected static AudioManager mAudioManager;
-
+    protected static SharedPreferences mPreferences;
     private static final int ANDROID_LOG_INFO = 0;
     private static final int ANDROID_LOG_ERROR = 1;
     private static final int SET_BRIGHTNESS = 2;
     private static TextView text = null;
     private static ScrollView scrollView = null;
-    private static SharedPreferences sharedPrefer;
     private static String err = null;
     private static final int MAX_LINE = 200;
     private static ArrayList<String> textList = new ArrayList<>();
@@ -313,7 +312,10 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         public void afterTextChanged(Editable s) {
             // TODO: Implement this method
 
-            if(textList.size() % (MAX_LINE * 25 + 1) == 0) {
+            int size = textList.size();
+            // 当总共行数为MAX_LINE * 25 + 1时清空text文本，TextView显示大量的文本会卡顿
+            int line = MAX_LINE * 25 + 1;
+            if(size >= line && (size % line == 0)) {
                 s.clear();
                 textList.clear();
             }
@@ -333,11 +335,12 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         AlertDialog.Builder builder = new AlertDialog.Builder(mSingleton);
         builder.setView(scrollView);
        
-        String error = sharedPrefer.getString("error", "");
-        if(!error.equals("") && text.getText().toString().equals("")) {
+        String error = mPreferences.getString("error", "");
+        
+        if(!error.isEmpty() && text.getText().toString().isEmpty()) {
             text.setTextColor(Color.RED);
             text.setText(error);
-            sharedPrefer.edit().putString("error", "").commit();
+            mPreferences.edit().putString("error", "").commit();
         }
 
         // 这里要移除child view，因为text是全局变量，不然会报错
@@ -352,7 +355,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 text.setText("");
-                sharedPrefer.edit().putString("error", "").commit();
+                mPreferences.edit().putString("error", "").commit();
             }
         });
         builder.setPositiveButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -572,7 +575,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
 
         scrollView = new ScrollView(this);
         scrollView.addView(text);
-        sharedPrefer = PreferenceManager.getDefaultSharedPreferences(this);
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
@@ -744,15 +747,16 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     @Override
     protected void onDestroy() {
         Log.v(TAG, "onDestroy()");
-        textList.clear();
-        text.setText("");
-        if(err != null && !err.equals(""))
-            sharedPrefer.edit().putString("error", err).commit();
+        
+        if(err != null && !err.isEmpty())
+            mPreferences.edit().putString("error", err).commit();
+        
         if(mHIDDeviceManager != null) {
             HIDDeviceManager.release(mHIDDeviceManager);
             mHIDDeviceManager = null;
         }
-
+        textList.clear();
+        text.setText("");
         if(SDLActivity.mBrokenLibraries) {
             super.onDestroy();
             return;

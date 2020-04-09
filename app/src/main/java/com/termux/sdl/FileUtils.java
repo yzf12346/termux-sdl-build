@@ -13,7 +13,7 @@ import java.util.zip.ZipInputStream;
 
 public final class FileUtils {
 
-    private static final String TAG = "Termux SDL JNI";
+    private static final String TAG = "FileUtils";
 
     public static void copyFile(File source, File target) throws IOException {
 

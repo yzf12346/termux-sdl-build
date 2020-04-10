@@ -19,11 +19,11 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := native_loader
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/../src
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/../termux_sdl
 
 LOCAL_SRC_FILES := loader.cpp
 
-LOCAL_CFLAGS    := -Wall
+LOCAL_CFLAGS    := -Os -Wall -fPIC
 
 LOCAL_LDLIBS    := -llog -landroid
 

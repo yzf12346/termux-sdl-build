@@ -493,7 +493,6 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         dialog.show();
 
         //获取mAlert对象
-
         try {
             Field mAlert = AlertDialog.class.getDeclaredField("mAlert");
             mAlert.setAccessible(true);

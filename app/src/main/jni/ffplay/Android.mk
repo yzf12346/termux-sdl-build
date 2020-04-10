@@ -53,7 +53,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := ffplay
 
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/include \
-                    $(LOCAL_PATH)/../src \
+                    $(LOCAL_PATH)/../termux_sdl \
                     $(LOCAL_PATH)/../SDL2/include \
                     $(LOCAL_PATH)/../SDL2_ttf \
                     $(LOCAL_PATH)/../SDL2_gfx 

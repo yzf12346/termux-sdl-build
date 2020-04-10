@@ -28,7 +28,7 @@ ffplay -af atempo=2.0 -vf setpts=1/2*PTS -i /sdcard/video/test.mp4
 
 解压heades.zip文件，复制SDL头文件到/data/data/com.termux/files/usr/include
 
-解压examples.zip文件到/sdcard根目录(showimage和playmus需要绝对路径)
+解压examples.zip文件到/sdcard根目录
 
 ```
 # 进入examples的示例代码下，执行 make run
@@ -66,7 +66,7 @@ Extract the libs.zip file and copy the SDL library file to /data/data/com.termux
 
 Extract the headers.zip file and copy the SDL header file to /data/data/com.termux/files/usr/include
 
-Extract the examples.zip file to /sdacrd root directory (because showimage and playmus need absolute paths)
+Extract the examples.zip file to /sdacrd root directory 
 
 
 ```
@@ -76,7 +76,7 @@ cd /sdcard/examples/SDL2/draw2
 make run
 ```
 
-##### app [download](https://github.com/Lzhiyong/termux-sdl/releases/download/termux-sdl/app-debug_sign.apk)
+##### app [download](https://github.com/Lzhiyong/termux-sdl/releases)
 
 
  **** 

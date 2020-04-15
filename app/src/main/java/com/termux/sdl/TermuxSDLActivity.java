@@ -50,7 +50,7 @@ public class TermuxSDLActivity extends SDLActivity {
         // sdlmain = your_project/libxxx.so
         sdlmain = getIntent().getStringExtra("sdlmain");
         
-        //Log.i(TAG, "sdlmain: " + sdlmain);
+        // Log.i(TAG, "sdlmain: " + sdlmain);
         // cpoy your SDL2 program to internal directory
         // to /data/user/0/com.termux.sdl/tmpdir/libxxx.so
         copyLibFile();

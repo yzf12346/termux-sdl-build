@@ -1299,7 +1299,7 @@ static void stream_close(VideoState *is) {
     av_free(is);
 }
 
-// ==================== draw graph =======================
+// ==================== draw progress =======================
 int start_x, start_y;
 int end_x, end_y;
 float curr_end_x;
@@ -1343,7 +1343,9 @@ int curr_time, total_time;
 float playback_speed = 1.0f;
 // 播放完成标志
 bool is_play_finished = false;
+// 音量改变标志
 bool is_changed_volume = false;
+// 亮度改变标志
 bool is_changed_bright = false;
 
 const char *font_path = "/system/fonts/DroidSans.ttf";
@@ -1492,7 +1494,7 @@ static void draw(SDL_Renderer *renderer) {
         font_size = 45;
         TTF_SetFontSize(font, font_size);
     }
-    //if(is_changed_bright) {}
+    
     // 绘制进度条
     draw_progress(renderer);
 }
@@ -3548,6 +3550,7 @@ static void set_brightness_level(float touch_x, float touch_y) {
     }
 }
 
+
 // 设置音量
 static void set_volume_level(VideoState *stream, float touch_x, float touch_y) {
     if(touch_x > screen_width / 2 && touch_x <= screen_width) {
@@ -3608,7 +3611,7 @@ static void calcu_curr_progress(float touch_x, float touch_y, double *frac) {
 //} paramter;
 
 
-//static void seek_position(void *data){
+//static void seek_stream(void *data){
 //    struct paramter *params = (struct paramter*)data;
 //
 //    int64_t ts = params->frac * params->stream->ic->duration;
@@ -3641,7 +3644,7 @@ static void event_loop(VideoState *cur_stream) {
             
             curr_timestamp = event.tfinger.timestamp;
             if(curr_timestamp - last_timestamp <= 300 && last_timestamp != 0) {
-                // 双击事件
+                // 双击事件 
                 toggle_pause(cur_stream);
                 last_timestamp = 0;
             } else {
@@ -3669,9 +3672,9 @@ static void event_loop(VideoState *cur_stream) {
         case SDL_FINGERUP: // 触摸抬起
 
             if(is_seek_progress) {
-                // 创建线程进行seek, 因为在触摸滑动(SDL_FINGERMOTION)过程中进行seek操作会卡帧
+                // 创建线程进行seek, 因为在触摸滑动(SDL_FINGERMOTION)中进行seek操作会卡帧
                 //struct paramter params = {cur_stream, frac};
-                //seek_thread = SDL_CreateThread(seek_position, "seek thread", (void*)&params);
+                //seek_thread = SDL_CreateThread(seek_stream, "seek thread", (void*)&params);
 
                 int64_t ts = frac * cur_stream->ic->duration;
                 if(cur_stream->ic->start_time != AV_NOPTS_VALUE)

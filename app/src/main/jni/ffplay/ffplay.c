@@ -3558,7 +3558,7 @@ static void set_volume_level(VideoState *stream, float touch_x, float touch_y) {
         //int volume_level = av_clip(stream->audio_volume, 0, 100);
         
         // 当volume_level为0时，才调用SDL_AndroidGetVolume()方法
-        // SDL_AndroidGetVolume方法在[0...100]过程中，只会调用一次
+        // SDL_AndroidGetVolume方法在[0..100]范围内，只会调用一次
         if(volume_level == 0)
             volume_level = SDL_AndroidGetVolume();
         

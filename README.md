@@ -14,6 +14,9 @@ cp example/SDL2/ffplay/ffplay /data/data/com.termux/files/usr/bin
 # 播放视频
 ffplay -i /sdcard/video/test.mp4
 
+# 播放音乐 1.5倍速
+ffplay -af atempo=1.5 -i /sdcard/music/hello.flac
+
 # 2倍速度播放
 ffplay -af atempo=2.0 -vf setpts=1/2*PTS -i /sdcard/video/test.mp4
 
@@ -24,16 +27,15 @@ ffplay -af atempo=2.0 -vf setpts=1/2*PTS -i /sdcard/video/test.mp4
 
 
 ### 如何使用：
-解压libs.zip文件，复制SDL库文件到/data/data/com.termux/files/usr/lib
+解压examples/libs.zip文件，复制SDL库文件到/data/data/com.termux/files/usr/lib
 
-解压heades.zip文件，复制SDL头文件到/data/data/com.termux/files/usr/include
+解压examples/heades.zip文件，复制SDL头文件到/data/data/com.termux/files/usr/include
 
-解压examples.zip文件到/sdcard根目录
 
 ```
 # 进入examples的示例代码下，执行 make run
 # 比如...
-cd /sdcard/examples/SDL2/draw2
+cd /sdcard/termux-sdl/examples/SDL2/draw2
 make run
 ```
 
@@ -53,6 +55,10 @@ cp example/SDL2/ffplay/ffplay /data/data/com.termux/files/usr/bin
 # Play video
 ffplay -i /sdcard/video/test.mp4
 
+# play music whit 1.5x speed
+ffplay -af atempo=1.5 -i /sdcard/music/hello.flac
+
+
 # 2x speed playback
 ffplay -af atempo=2.0 -vf setpts=1/2*PTS -i /sdcard/video/test.mp4
 
@@ -62,17 +68,15 @@ ffplay -af atempo=2.0 -vf setpts=1/2*PTS -i /sdcard/video/test.mp4
 
 
 ### How to use:
-Extract the libs.zip file and copy the SDL library file to /data/data/com.termux/files/usr/lib
+Extract the examples/libs.zip file and copy the SDL library file to /data/data/com.termux/files/usr/lib
 
-Extract the headers.zip file and copy the SDL header file to /data/data/com.termux/files/usr/include
-
-Extract the examples.zip file to /sdacrd root directory 
+Extract the examples/headers.zip file and copy the SDL header file to /data/data/com.termux/files/usr/include
 
 
 ```
 # Enter the demo code under examples and execute make run
 # for example
-cd /sdcard/examples/SDL2/draw2
+cd /sdcard/termux-sdl/examples/SDL2/draw2
 make run
 ```
 

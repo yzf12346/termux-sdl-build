@@ -28,16 +28,15 @@ public class TermuxSDLActivity extends SDLActivity {
 
     private static final String TAG = "TermuxSDLActivity";
 
-    private Button positiveButton = null;
-
-    // the self lib pathname
+    // the run main program pathname
     private String sdlmain = "libmain.so";
 
-    // get the sdl2 libraries version
+    // the SDL2 libraries version
     private enum SDLVersion {
         SDL2, SDL2_image, SDL2_mixer, SDL2_net, SDL2_ttf, SDL2_gfx;
     }
 
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,14 +49,16 @@ public class TermuxSDLActivity extends SDLActivity {
         
         // sdlmain = your_project/libxxx.so
         sdlmain = getIntent().getStringExtra("sdlmain");
-        Log.i(TAG, "sdlmain: " + sdlmain);
-        // loading SDL lib to internal directory
+        
+        //Log.i(TAG, "sdlmain: " + sdlmain);
+        // cpoy your SDL2 program to internal directory
         // to /data/user/0/com.termux.sdl/tmpdir/libxxx.so
         copyLibFile();
 
     }
 
-    // 获取intent传入过来的参数
+    
+    // get arguments form intent
     @Override
     protected String[] getArguments() {
         String args = getIntent().getStringExtra("args");
@@ -69,7 +70,8 @@ public class TermuxSDLActivity extends SDLActivity {
         }
     }
 
-    // SDL2执行的main库
+    
+    // libmain.so (your SDL2 program, from intent)
     @Override
     protected String getMainSharedObject() {
         if(sdlmain != null && !sdlmain.isEmpty()) {
@@ -80,7 +82,8 @@ public class TermuxSDLActivity extends SDLActivity {
         }
     }
 
-    // 加载库文件到内部目录
+    
+    // copy libxxx.so to internal directory
     public void copyLibFile() {
         if(sdlmain == null || sdlmain.isEmpty()) return ;
         sdlmain = sdlmain.trim();
@@ -114,6 +117,7 @@ public class TermuxSDLActivity extends SDLActivity {
         }
     }
 
+    
     @Override
     protected void onStop() {
         super.onStop();
@@ -127,7 +131,8 @@ public class TermuxSDLActivity extends SDLActivity {
         deleteLibFile();
     }
 
-    // 删除传入内部目录的库文件
+    
+    // delete libxxx.so file in the internal directory
     public void deleteLibFile() {
         // delete /data/user/0/com.termux.sdl/tmpdir/libxxx.so
         if(sdlmain != null && !sdlmain.isEmpty()) {
@@ -140,7 +145,7 @@ public class TermuxSDLActivity extends SDLActivity {
     }
 
 
-    // 判断权限
+    // check permission
     public boolean hasPermission(String permission) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             return checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
@@ -148,6 +153,7 @@ public class TermuxSDLActivity extends SDLActivity {
             return true;
     }
 
+    
     public void applyPermission(String permission) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if(shouldShowRequestPermissionRationale(permission)) {
@@ -186,59 +192,31 @@ public class TermuxSDLActivity extends SDLActivity {
     }
 
 
-    private TextWatcher watcher = new TextWatcher() {
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            // TODO: Implement this method
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            // TODO: Implement this method
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            // TODO: Implement this method
-            if(positiveButton == null) return;
-            String text = s.toString().trim();
-            if(text.isEmpty())
-                positiveButton.setEnabled(false);
-            else
-                positiveButton.setEnabled(true);
-        }
-    };
-
-
-    // 显示执行ffplay命令dialog
+    // show ffplay dialog, you can input the ffplay command
     public void showFFplayDialog() {
-        View view = getLayoutInflater().inflate(R.layout.ffplay_cmd_dialog, null);
-        final EditText cmdText = view.findViewById(R.id.cmd_text);
+        final View view = getLayoutInflater().inflate(R.layout.ffplay_cmd_dialog, null);
+        final EditText cmdEditText = view.findViewById(R.id.cmd_text);
         final String cmd = mPreferences.getString("cmd", "").trim();
 
         if(!cmd.isEmpty()) {
-            cmdText.setText(cmd);
+            cmdEditText.setText(cmd);
         } else {
-            cmdText.setHint("Usage: ffplay [options] input_file");
+            cmdEditText.setHint("Usage: ffplay [options] input_file");
         }
 
-        cmdText.requestFocus();
+        cmdEditText.requestFocus();
 
-        // 添加文本监听
-        cmdText.addTextChangedListener(watcher);
-
-        // 创建对话框
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-        .setTitle("ffplay")
-        .setView(view)
-        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+        // create dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("ffplay");
+        builder.setView(view);
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 SDLActivity.nativeSendQuit();
                 //SDLActivity.nativeQuit();
-                String text = cmdText.getText().toString().trim();
+                String text = cmdEditText.getText().toString().trim();
                 mPreferences.edit().putString("cmd", text).commit();
 
                 if(text.startsWith("ffplay")) {
@@ -249,14 +227,14 @@ public class TermuxSDLActivity extends SDLActivity {
                 startActivity(intent);
                 finish();
             }
-        })
-        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+        });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
-        })
-        .setOnCancelListener(new DialogInterface.OnCancelListener() {
+        });
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
                 dialog.dismiss();
@@ -264,16 +242,10 @@ public class TermuxSDLActivity extends SDLActivity {
         });
         AlertDialog dialog = builder.create();
         dialog.show();
-        positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        if(cmdText.getText().toString().trim().isEmpty())
-            positiveButton.setEnabled(false);
-        else
-            positiveButton.setEnabled(true);
-
     }
 
 
-    // 显示版本信息
+    // show the version information 
     public void showAboutDialog() {
 
         String versionName = null;

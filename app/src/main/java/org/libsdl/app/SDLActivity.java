@@ -162,21 +162,21 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     };
 
 
-    // 设置亮量[0..100] 方法在src/core/android/SDL_android.c里调用
-    // 设置当前activity显示的亮度
+    // set brightness[0..100]
+    // the method is called by jni
     public static void setRealBrightness(int brightness) {
 
         WindowManager.LayoutParams lp = mSingleton.getWindow().getAttributes();
 
         int maxBrightness = getMaxBrightness();
 
-        // 转为为[0..100]区间 brightness * maxBrightness / 100
+        // [0..100]range brightness * maxBrightness / 100
         lp.screenBrightness = Float.valueOf(brightness * maxBrightness / 100) * (1f / maxBrightness);
         mSingleton.getWindow().setAttributes(lp);
     }
 
 
-    // 不能在子线程中更新UI
+    // cannot update the UI in the child thread
     public static void setBrightness(int brightness) {
         Message msg = mHandler.obtainMessage(SET_BRIGHTNESS);
         msg.obj = brightness;
@@ -184,7 +184,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     }
 
 
-    // 设置亮度，退出app也能保持该亮度值
+    // set brightness and keeping, even app exit
     public static void saveBrightness(int brightness) {
         ContentResolver resolver = mSingleton.getContentResolver();
         Uri uri = android.provider.Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS);
@@ -193,7 +193,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     }
 
 
-    // 获取亮度[0..100] 方法在src/core/android/SDL_android.c里调用
+    // get current brightness[0..100] the method is called by jni
     public static int getBrightness() {
         int brightness = 0;
         int maxBrightness = getMaxBrightness();
@@ -204,11 +204,12 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         } catch(Exception e) {
             e.printStackTrace();
         }
-        // 亮度转换为[0..100]
+        // [0..100]range
         return brightness / maxBrightness * 100;
     }
 
-    // 如果是自定义ROM最大亮度可能就不是255
+    // get the maximum brightness, default 255
+    // but in some custom ROM, this value may not be 255
     public static int getMaxBrightness() {
         int maxBrightness = 255;
         try {
@@ -226,7 +227,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     }
 
 
-    // 开启/关闭自动亮度
+    // enable/disable auto brightness
     public static boolean autoBrightness(boolean enable) {
         int result = 0;
         if(enable) {
@@ -240,7 +241,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     }
 
 
-    // 判断是否开启自动调节亮度
+    // Determine whether to turn on auto brightness
     public static boolean isAutoBrightness() {
         ContentResolver resolver = mSingleton.getContentResolver();
         boolean isAutomicBrightness = false;
@@ -254,7 +255,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     }
 
 
-    // 设置音量[0..100] 方法在src/core/android/SDL_android.c里调用
+    // set volume[0..100] the method is called by jni
     public static void setVolume(int volume) {
         if(mAudioManager != null) {
             //Log.i(TAG, "min volume: " + mAudioManager.getStreamMinVolume(AudioManager.STREAM_MUSIC));
@@ -264,7 +265,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         }
     }
 
-    // 获取音量[0..100] 方法在src/core/android/SDL_android.c里调用
+    // get current volume[0..100] the method is called by jni
     public static int getVolume() {
         if(mAudioManager != null) {
             int currVolume =  mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
@@ -275,7 +276,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         return 0;
     }
 
-    // 这个方法用于获取JNI和SDL2的log
+    // get log from SDL2
     public static void nativeLogPrint(String info, int logLevel) {
 
         Message msg = null;
@@ -294,7 +295,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         }
     }
 
-   static int count = 0;
+ 
     private static TextWatcher watcher = new TextWatcher() {
 
         @Override
@@ -329,7 +330,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         }
     };
     
-    // 显示SDL2传递过来的log
+    // show logcat dialog
     public static void showLogcatDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mSingleton);
@@ -343,7 +344,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
             mPreferences.edit().putString("error", "").commit();
         }
 
-        // 这里要移除child view，因为text是全局变量，不然会报错
+        // remove child view，otherwise it will happen
         // java.lang.IllegalStateException: The specified child already has a parent.
         // You must call removeView() on the child's parent first.
         ViewGroup viewGroup = (ViewGroup) scrollView.getParent();

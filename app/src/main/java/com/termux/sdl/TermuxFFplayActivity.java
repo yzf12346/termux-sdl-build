@@ -11,8 +11,6 @@ import org.libsdl.app.SDLActivity;
 public class TermuxFFplayActivity extends SDLActivity {
 
     private final static String TAG = "TermuxFFplayActivity";
-
-    protected static boolean mFullscreenModeActive = true;
     
     // the ffplay command params
     private String argv = "ffplay";
@@ -22,13 +20,14 @@ public class TermuxFFplayActivity extends SDLActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        
         if((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
             finish();
             return;
         }
 
+        // get the arguments from intent
         argv = getIntent().getStringExtra("argv");
-        Log.i(TAG, "argv = " + argv);
     }
 
 
@@ -40,6 +39,7 @@ public class TermuxFFplayActivity extends SDLActivity {
             return super.getMainSharedObject();
     }
 
+    
     @Override
     protected String[] getArguments() {
         if(argv != null && !argv.isEmpty())
@@ -48,6 +48,7 @@ public class TermuxFFplayActivity extends SDLActivity {
             return super.getArguments();
     }
 
+    
     @Override
     protected void onStop() {
         super.onStop();

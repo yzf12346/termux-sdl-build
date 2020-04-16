@@ -176,7 +176,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     }
 
 
-    // cannot update the UI in the child thread
+    // cannot update the ui in the child thread
     public static void setBrightness(int brightness) {
         Message msg = mHandler.obtainMessage(SET_BRIGHTNESS);
         msg.obj = brightness;
@@ -184,7 +184,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     }
 
 
-    // set brightness and keeping, even app exit
+    // set brightness and keeping, even app has been exit
     public static void saveBrightness(int brightness) {
         ContentResolver resolver = mSingleton.getContentResolver();
         Uri uri = android.provider.Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS);
@@ -277,7 +277,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     }
 
     // get log from SDL2
-    public static void nativeLogPrint(String info, int logLevel) {
+    protected static void nativeLogPrint(String info, int logLevel) {
 
         Message msg = null;
 
@@ -433,7 +433,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
                };
     }
 
-    // Load the .so
+    // Load the all of so
     public void loadLibraries() {
         for(String lib : getLibraries()) {
             SDL.loadLibrary(lib);
@@ -469,6 +469,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     }
 
 
+    // show error dialog
     protected static void showErrorDialog(String err) {
 
         AlertDialog.Builder builder  = new AlertDialog.Builder(mSingleton);
@@ -493,15 +494,16 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
 
-        //获取mAlert对象
+        
         try {
             Field mAlert = AlertDialog.class.getDeclaredField("mAlert");
             mAlert.setAccessible(true);
             Object mAlertController = mAlert.get(dialog);
-            //获取mMessageView并设置大小颜色
+            // get message textview
             Field mMessage = mAlertController.getClass().getDeclaredField("mMessageView");
             mMessage.setAccessible(true);
             TextView mMessageView = (TextView) mMessage.get(mAlertController);
+            // set dialog message text color
             mMessageView.setTextColor(Color.RED);
 
         } catch(NoSuchFieldException e) {

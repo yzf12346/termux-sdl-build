@@ -6,7 +6,7 @@ LOCAL_MODULE := main
 
 LOCAL_C_INCLUDES += ../SDL2/include 
 
-LOCAL_CXX_FLAGS  := -std=c++11 -DANDROID
+LOCAL_CXX_FLAGS  := -fPIC -std=c++11 -DANDROID
 
 # Add your application source files here...
 LOCAL_SRC_FILES := ../SDL2/src/main/android/SDL_android_main.c \

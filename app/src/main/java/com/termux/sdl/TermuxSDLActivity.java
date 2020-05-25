@@ -28,7 +28,7 @@ public class TermuxSDLActivity extends SDLActivity {
 
     private static final String TAG = "TermuxSDLActivity";
 
-    // the run main program pathname
+    // the default main program 
     private String sdlmain = "libmain.so";
 
     // the SDL2 libraries version
@@ -58,7 +58,7 @@ public class TermuxSDLActivity extends SDLActivity {
     }
 
     
-    // get arguments form intent
+    // get arguments from intent
     @Override
     protected String[] getArguments() {
         String args = getIntent().getStringExtra("args");

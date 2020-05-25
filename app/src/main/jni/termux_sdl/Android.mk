@@ -18,7 +18,7 @@ include $(CLEAR_VARS)
 
 LOCAL_CPP_EXTENSION := .cpp .cc
 
-LOCAL_CPPFLAGS   := -std=c++11 -D__ANDROID__
+LOCAL_CPPFLAGS   := -fPIC -std=c++11 -D__ANDROID__
 LOCAL_MODULE     := termux_sdl
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../SDL2/include \

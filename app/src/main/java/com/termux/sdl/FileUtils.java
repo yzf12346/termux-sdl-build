@@ -19,13 +19,13 @@ public final class FileUtils {
 
         if(source.isDirectory()) {
             if(!target.exists()) {
-                target.mkdir();
+                target.mkdirs();
             }
 
-            String[] children = source.list();
-            for(int i = 0; i < children.length; i++) {
-                copyFile(new File(source, children[i]),
-                         new File(target, children[i]));
+            String[] child = source.list();
+            for(int i = 0; i < child.length; i++) {
+                copyFile(new File(source, child[i]),
+                         new File(target, child[i]));
             }
         } else {
             InputStream in = new FileInputStream(source);

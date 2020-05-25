@@ -55,6 +55,7 @@ LOCAL_SHARED_LIBRARIES := hidapi
 
 LOCAL_CFLAGS += -DGL_GLEXT_PROTOTYPES
 LOCAL_CFLAGS += \
+    -fPIC \
 	-Wall -Wextra \
 	-Wdocumentation \
 	-Wdocumentation-unknown-command \

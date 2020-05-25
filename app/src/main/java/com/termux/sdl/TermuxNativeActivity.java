@@ -14,7 +14,7 @@ public class TermuxNativeActivity extends Activity {
 
     private static final String TAG = "TermuxNativeActivity";
 
-    // the native app library
+    // the default native app 
     private String nativeApp = "libnative_loader.so";
 
     // error message
@@ -35,9 +35,9 @@ public class TermuxNativeActivity extends Activity {
         // to /data/user/0/com.termux.sdl/tmpdir
         if(copyLibFile()) {
             Intent intent = new Intent(this, NativeActivity.class);
-            //from jni: loader.cpp
+            // from jni: native_loader.cpp
             intent.putExtra("nativeApp", nativeApp);
-            //now run binary file
+            // start native app
             startActivity(intent);
             finish();
         } else {
@@ -53,7 +53,6 @@ public class TermuxNativeActivity extends Activity {
 
 
     public boolean copyLibFile() {
-        // lib must be exist
         if(nativeApp == null || nativeApp.isEmpty()) return false;
         nativeApp = nativeApp.trim();
         if((new File(nativeApp)).exists()) {

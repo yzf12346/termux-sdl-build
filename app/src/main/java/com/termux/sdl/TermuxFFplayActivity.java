@@ -6,7 +6,7 @@ import android.util.Log;
 import org.libsdl.app.SDLActivity;
 
 
-// using ffplay to playing video and audio files
+// using ffplay to playing video and audio 
 
 public class TermuxFFplayActivity extends SDLActivity {
 
@@ -47,7 +47,6 @@ public class TermuxFFplayActivity extends SDLActivity {
         else
             return super.getArguments();
     }
-
     
     @Override
     protected void onStop() {

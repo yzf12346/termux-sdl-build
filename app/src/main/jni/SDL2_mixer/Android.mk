@@ -60,7 +60,7 @@ LOCAL_MODULE := SDL2_mixer
 
 LOCAL_SRC_FILES := $(notdir $(filter-out %/playmus.c %/playwave.c, $(wildcard $(LOCAL_PATH)/*.c))) \
 
-LOCAL_CFLAGS :=
+LOCAL_CFLAGS := -fPIC
 LOCAL_LDLIBS :=
 LOCAL_STATIC_LIBRARIES :=
 LOCAL_SHARED_LIBRARIES := SDL2

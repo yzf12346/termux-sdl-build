@@ -38,7 +38,7 @@ extern "C" {
 static char* get_app_pathname(const char *conf) {
     char buf[PATH_MAX];
 	
-	LOGI(TAG, "Loading config file %s\n", conf);
+    LOGI(TAG, "Loading config file %s\n", conf);
     
     FILE *fp = fopen(conf, "rb");
     if (fp != NULL) {
@@ -79,20 +79,20 @@ void android_main(struct android_app *state) {
     JNIEnv *env = NULL;
     state->activity->vm->AttachCurrentThread(&env, 0);
 
-	// get activity object
+    // get activity object
     jobject activity = state->activity->clazz;
 
     jclass class_activity = env->GetObjectClass(activity); // class pointer of NativeActivity
     jmethodID midGetIntent = env->GetMethodID(class_activity, "getIntent", "()Landroid/content/Intent;");
     
-	// get intent object
-	jobject intent = env->CallObjectMethod(activity, midGetIntent); // Get the intent
+    // get intent object
+    jobject intent = env->CallObjectMethod(activity, midGetIntent); // Get the intent
 
     jclass class_intent = env->GetObjectClass(intent); // class pointer of Intent
     jmethodID midGetStringExtra = env->GetMethodID(class_intent, "getStringExtra",
                                        "(Ljava/lang/String;)Ljava/lang/String;");
 
-	// get the params from intent
+    // get the params from intent
     jstring jparams = (jstring) env->CallObjectMethod(intent, midGetStringExtra,
                                                        env->NewStringUTF("nativeApp"));
 
@@ -148,11 +148,11 @@ void android_main(struct android_app *state) {
 
     LOGI(TAG, "native app start...\n");
 
-	// call android_main
+    // call android_main
     new_main(state);
 
     dlclose(handle);
-	free(nativeApp);
+    free(nativeApp);
 }
 
 

@@ -47,7 +47,7 @@ static char* get_app_pathname(const char *conf) {
     }
 
     fclose(fp);
-    
+
     return pathname;
 }
 
@@ -63,7 +63,6 @@ void android_main(struct android_app *state) {
     char path[PATH_MAX];
     char *nativeApp = NULL;
 
-    
     /**
      * Dummy function that used to be used to prevent the linker from stripping app
      * glue code. No longer necessary, since __attribute__((visibility("default")))

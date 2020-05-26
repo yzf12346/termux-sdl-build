@@ -44,9 +44,7 @@ static char* get_app_pathname(const char *conf) {
     if (fp != NULL) {
         char *pathname = fgets(buf, sizeof(buf), fp);
         fclose(fp);
-        if (pathname != NULL) {
-            return pathname;
-        }
+        return pathname;
     }
 
     LOGE(TAG, "Can't open file %s\n", conf);

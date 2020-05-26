@@ -37,18 +37,18 @@ extern "C" {
 
 static char* get_app_pathname(const char *conf) {
     char buf[PATH_MAX];
-	
+    char *pathname = NULL;
+
     LOGI(TAG, "Loading config file %s\n", conf);
     
     FILE *fp = fopen(conf, "rb");
     if (fp != NULL) {
-        char *pathname = fgets(buf, sizeof(buf), fp);
-        fclose(fp);
-        return pathname;
+        pathname = fgets(buf, sizeof(buf), fp);
     }
 
-    LOGE(TAG, "Can't open file %s\n", conf);
-    return NULL;
+    fclose(fp);
+    
+    return pathname;
 }
 
 
